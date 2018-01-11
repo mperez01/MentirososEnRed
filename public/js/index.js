@@ -3,7 +3,8 @@
 $(() => {
 
     hideAll();
-    paginaPrincipal();
+    //paginaPrincipal();
+    paginaPartidas();
 
 })
 
@@ -13,9 +14,14 @@ $(() => {
 function hideAll() {
     $('#usuario').hide();
     $('#login').hide();
+    $('#partidas').hide();
 }
 
 function paginaPrincipal() {
     $('#login').show();
 }
 
+function paginaPartidas() {
+    $('#usuario').show();
+    $('#partidas').show();
+ }

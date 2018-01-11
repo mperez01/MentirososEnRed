@@ -1,0 +1,27 @@
+{
+  "name": "mentirososenred",
+  "version": "1.0.0",
+  "description": "Mentirosos En Red, juego en navegador para la asignatura Aplicaciones Web",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "keywords": [
+    "node",
+    "mentirososenred",
+    "aw"
+  ],
+  "author": "Marcelino Perez Duran y Mario Rodriguez Salinero",
+  "license": "CC-BY-NC-SA-4.0",
+  "private": true,
+  "dependencies": {
+    "body-parser": "~1.18.2",
+    "mysql": "2.15.0",
+    "debug": "~2.6.9",
+    "ejs": "~2.5.7",
+    "express": "^4.16.2",
+    "morgan": "~1.9.0",
+    "serve-favicon": "~2.4.5"
+  }
+}

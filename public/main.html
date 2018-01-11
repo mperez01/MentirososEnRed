@@ -14,8 +14,39 @@
 <body>
     <div class="header">
         Juego del mentiroso
+        <!-- Usuario Logeado -->
+        <div id="usuario">
+            <label class='name'> Marce </label>
+            <a class='botonLogout' href=''>Desconectar</a>
+        </div>
+        <!--  -->
     </div>
-    <div id="response-container"></div>
+    <!--Pagina principal de login-->
+    <div id="login">
+        <div class='welcome'>
+            <label>¡Bienvenido!</label>
+            <img src='img/ImagenPortada.jpg' alt='Cartas' id='logo'> </div>
+        <div class='recuadro'>
+                <h2>Identificarse</h2>
+            <form id='formLogin' action=''>
+                <div>
+                    <p>Nombre de usuario</p>
+                    <input class='rellenar' type='text' placeholder='Introduce nombre'>
+                </div>
+                <div>
+                    <p>Contraseña</p>
+                    <input class='rellenar' type='password' placeholder='Introduce contraseña'>
+                </div>
+                <div>
+                    <input class='botonAceptar' type='submit' value='Aceptar'>
+                    <input class='botonNuevo' type='submit' value='Nuevo Usuario'>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- -->
+
 </body>
 
 </html>

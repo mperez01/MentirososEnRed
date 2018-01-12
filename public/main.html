@@ -16,8 +16,8 @@
         Juego del mentiroso
         <!-- Usuario Logeado -->
         <div id="usuario">
-            <label class='name'> Marce </label>
-            <a class='botonLogout' href=''>Desconectar</a>
+            <label class='name'></label>
+            <a id='botonLogout' href=''>Desconectar</a>
         </div>
         <!--  -->
     </div>
@@ -29,18 +29,18 @@
         </div>
         <div class='recuadro'>
             <h2>Identificarse</h2>
-            <form id='formLogin' action=''>
+            <form id='formLogin' method="POST" action='#'>
                 <div>
                     <p>Nombre de usuario</p>
-                    <input class='rellenar' type='text' placeholder='Introduce nombre'>
+                    <input class='rellenar' id='name' type='text' placeholder='Introduce nombre'>
                 </div>
                 <div>
                     <p>Contraseña</p>
-                    <input class='rellenar' type='password' placeholder='Introduce contraseña'>
+                    <input class='rellenar' id='pass' type='password' placeholder='Introduce contraseña'>
                 </div>
                 <div>
-                    <input class='botonAceptar' type='submit' value='Aceptar'>
-                    <input class='botonNuevo' type='submit' value='Nuevo Usuario'>
+                    <input class='botonAceptar' id="loginAceptar" type='submit' value='Aceptar'>
+                    <input class='botonNuevo' id="loginNuevo" type='submit' value='Nuevo Usuario'>
                 </div>
             </form>
         </div>

@@ -7,7 +7,9 @@ var express = require('express');
 var path = require('path');
 const mysql = require("mysql");
 const config = require("./config");
-var bodyParser = require('body-parser');
+const expressValidator = require("express-validator");
+const bodyParser = require('body-parser');
+const daoUsers = require("./dao_users");
 
 var app = express();
 
@@ -17,6 +19,17 @@ let pool = mysql.createPool({
   user: config.mysqlConfig.user,
   password: config.mysqlConfig.password
 });
+
+app.use(expressValidator({
+  customValidators: {
+    //comprobamos que param no es solo espacios en blanco
+    whiteSpace: function (param) {
+      return param.trim().length > 0;
+    }
+  }
+}));
+
+let daoU = new daoUsers.DAOUsers(pool);
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -33,7 +46,37 @@ app.get("/", (request, response) => {
   response.status(300);
   response.redirect("/main.html");
   response.end();
+});
 
+app.post("/login", (request, response) => {
+  request.checkBody("name").notEmpty();
+  request.checkBody("pass").notEmpty();
+  request.getValidationResult().then((result) => {
+    if (result.isEmpty()) {
+      daoU.isUserCorrect(request.body.name, request.body.pass, (err, id) => {
+        if (err) {
+          //Error en base de datos
+          response.status(500);
+          response.end();
+        }
+        else {
+          if (id > 0) {
+            //Usuario logeado
+            response.json(true);
+          }
+          else {
+            //Error, usuario o contraseña no válido/encontrado
+            response.status(404);
+            response.end();
+          }
+        }
+      })
+    } else {
+      //ERROR! Los datos introducidos no son válidos
+      response.status(400);
+      response.end();
+    }
+  });
 });
 
 //Listen in port gived in config.js

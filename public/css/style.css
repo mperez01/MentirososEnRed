@@ -19,7 +19,7 @@ body {
   float: right;
 }
 
-.botonLogout{
+#botonLogout{
   font-size: 90%;
   padding:8px 16px;
   background-color: rgb(200, 53, 69);
@@ -113,7 +113,7 @@ h2 {
 
 .botonNuevo:hover, .botonNuevo:focus, 
 .botonAceptar:hover, .botonAceptar:focus,
-.botonLogout:hover, .botonLogout:focus {
+#botonLogout:hover, #botonLogout:focus {
   background:rgb(88, 88, 158);
 }
 

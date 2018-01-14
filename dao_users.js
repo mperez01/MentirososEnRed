@@ -76,7 +76,7 @@ class DAOUsers {
         this.pool.getConnection((err, connection) => {
             if (err) { callback(err); return; }
             connection.query("INSERT INTO usuarios (login, password)" +
-                " VALUES (?, ?, ?, ?, ?, ?)", [name, password],
+                " VALUES (?, ?)", [name, password],
                 function (err, resultado) {
                     if (err) { callback(err); return; }
                     else {

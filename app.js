@@ -79,6 +79,47 @@ app.post("/login", (request, response) => {
   });
 });
 
+app.post("/new_user", (request, response) => {
+  //request.checkBody("name", "Nombre de usuario no válido").matches(/^[A-Z0-9]*$/i);
+  request.checkBody("name").notEmpty();
+  request.checkBody("pass").notEmpty();
+  request.getValidationResult().then((result) => {
+      if (result.isEmpty()) {
+          daoU.userExist(request.body.name, (err, name) => {
+              if (err) {
+                response.status(500);
+                response.end();
+              }
+              else {
+                  if (String(name).toLowerCase() !== String(request.body.name).toLowerCase()) {
+                    //toLowerCase() convierte en minuscula toda la cadena de caracteres
+                    console.log("Name = " + name + "Request body = " + request.body.name )
+                      daoU.insertUser(request.body.name, request.body.pass, (err, id) => {
+                              if (err) {
+                                  response.status(500);
+                                  response.end();
+                              } else {
+                                  //Usuario creado correctamente
+                                  response.status(201);
+                                  response.end();
+                              }
+                          })
+                  }
+                  else {
+                      //response.setFlash("Dirección de correo electrónico en uso");
+                      response.status(400);
+                      response.end();
+                  }
+              }
+          })
+      } else {
+          //Usuario/contraseña vacio
+          response.status(400);
+          response.end();
+      }
+  });
+})
+
 //Listen in port gived in config.js
 app.listen(config.port, (err) => {
   if (err) {

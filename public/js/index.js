@@ -66,11 +66,47 @@ function newUser(event) {
      * Tratar el formulario con AJAX
      * Peticion POST
      */
+    var name = $("#name").val();
+    var pass = $("#pass").val();
+    var text = "";
+    if (name ===''){
+        text += "\nNombre de usuario no puede estar vacío";
+    }
+    if (pass === '') {
+        text += "\nContraseña no puede estar vacío";
+    }
+
     event.preventDefault();
-    $('#formLogin').attr("action", "/newUser");
-    $('#login').hide();
-    $('#usuario').show();
-    $('#partidas').show();
+
+    $.ajax({
+        type: "POST",
+        url: "/new_user",
+        contentType: 'application/json',
+        data: JSON.stringify({name: name, pass:pass}),
+        success: (data, textStatus, jqXHR) => {
+            $('#login').hide();
+            //Nombre de usuario en el HTML !!!OJO; lo toma de var name, no de data!!
+            $("#usuario > label").html(primeraMayuscula(name));
+            $('#usuario').show();
+
+            //Como empezamos en "mis partidas", cambiamos su color a negro
+            $("#partidas a:first").css({"color":"black"});
+            //Mostrar partidas del usuario en el html
+            $('#partidas').show();
+        },
+
+        error: (jqXHR, textStatus, errorThrown) => {
+            if (jqXHR.status === 400) {
+                if(text==="") {
+                    text += "\nNombre de usuario en uso";
+                }
+                alert("Datos introducidos de forma incorrecta" + text);
+            }
+            else if (jqXHR.status === 500) {
+                alert("Error en acceso a la base de datos");
+            }
+        }
+    });
 }
 
 function userLogout() {

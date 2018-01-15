@@ -5,6 +5,8 @@ $(() => {
     $('#loginAceptar').on("click", userLogin);
     $('#loginNuevo').on("click", newUser);
     $('#botonLogout').on("click", userLogout);
+    $('#misPartidas').on("click", userPartidas);
+    $('#createPartida').on("click", createPartida);
 })
 
 function hideAll() {
@@ -109,6 +111,39 @@ function newUser(event) {
     });
 }
 
+function userPartidas(event) {
+    event.preventDefault();
+    $('#partidas').show();
+    $("#misPartidas").css({"color":"black"});
+    //¿Comprobamos de nuevo si hay nuevas partidas en las que esta el usuario?
+}
+
+function createPartida(event) {
+    event.preventDefault();
+    var partidaName = $('#crearPartidaName').val();
+
+    //VALIDAR! Que  no sea vacia, etc
+
+    // Comprobar que no existe partida con el mismo nombre ¿?
+    // Insertar info en la base de datos, nombre y estado (añadir al jugador que ha creado la partida)
+    $.ajax({
+        type: "POST",
+        url: "/createPartida",
+        contentType: 'application/json',
+        data: JSON.stringify({name: partidaName}),
+        success: (data, textStatus, jqXHR) => {
+
+        },
+
+        error: (jqXHR, textStatus, errorThrown) => {
+            if (jqXHR.status === 500) {
+                alert("Error en acceso a la base de datos");
+            }
+        }
+    });
+}
+
 function userLogout() {
     //Desconexion del usuario
+    //Borrar posible información del usuario
 }

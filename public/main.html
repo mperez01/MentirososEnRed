@@ -48,24 +48,24 @@
 
     <!--Usuario logeado (Partidas de un usuario)-->
     <div id='partidas'>
-        <div class='seleccion'>
-            <a href=''>Mis partidas</a>
+        <div id='seleccionPartidas'>
+            <a id='misPartidas' href=''>Mis partidas</a>
             <a href=''>Partidas amiguetes</a>
             <a href=''>Familiar</a>
         </div>
 
         <div class='crearPartida'>
             <p>Crear una nueva partida</p>
-            <form action=''>
-                <input class='rellenarCrear' type='text' placeholder='Introduce aquí el nombre'>
-                <input class='botonAceptar' type='submit' value='Crear'>
+            <form action='#'>
+                <input class='rellenarCrear' type='text' placeholder='Introduce aquí el nombre' id="crearPartidaName">
+                <input class='botonAceptar' id="createPartida" type='submit' value='Crear'>
             </form>
         </div>
         <div class='crearPartida'>
             <p>Unirse a una partida existente</p>
-            <form action=''>
+            <form action='#'>
                 <input class='rellenarCrear' type='text' placeholder='Introduce aquí el nombre de la partida'>
-                <input class='botonAceptar' type='submit' value='Unirse'>
+                <input class='botonAceptar' id="joinPartida"type='submit' value='Unirse'>
             </form>
         </div>
 

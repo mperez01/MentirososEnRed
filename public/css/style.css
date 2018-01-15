@@ -117,17 +117,17 @@ h2 {
   background:rgb(88, 88, 158);
 }
 
-.seleccion {
+#seleccionPartidas {
   padding: 8px;
   border-bottom: 1px solid rgb(226, 226, 226);
 }
-.seleccion a {
+#seleccionPartidas a {
   margin: 17px;
   color: rgb(36, 142, 255);
   text-decoration: none; 
 }
 
-.seleccion a:hover {
+#seleccionPartidas a:hover {
   color:rgb(88, 88, 158);
 }
 

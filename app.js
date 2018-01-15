@@ -10,6 +10,7 @@ const config = require("./config");
 const expressValidator = require("express-validator");
 const bodyParser = require('body-parser');
 const daoUsers = require("./dao_users");
+const daoGames = require("./dao_games");
 
 var app = express();
 
@@ -63,6 +64,7 @@ app.post("/login", (request, response) => {
           if (id > 0) {
             //Usuario logeado
             response.json(true);
+            daoG.getGames(id,(err,games));
           }
           else {
             //Error, usuario o contraseña no válido/encontrado

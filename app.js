@@ -50,6 +50,19 @@ app.get("/", (request, response) => {
   response.end();
 });
 
+app.get("/get_partidas/:id", (request, response) => {
+
+  daoG.getGames(request.params.id, (err, games) => {
+    if (err) {
+      //Error en base de datos
+      response.status(500);
+      response.end();
+    } else {
+      response.json(games);
+    }
+  })
+})
+
 app.post("/login", (request, response) => {
   request.checkBody("name").notEmpty();
   request.checkBody("pass").notEmpty();
@@ -64,15 +77,8 @@ app.post("/login", (request, response) => {
         else {
           if (id > 0) {
             //Usuario logeado
-          daoG.getGames(id,(err,games)=>{
-              if (err) {
-                //Error en base de datos
-                response.status(500);
-                response.end();
-              }else{
-                  response.json(games);
-              }
-            })
+            //QUITAR y devolver true
+            response.json(true);
           }
           else {
             //Error, usuario o contraseña no válido/encontrado
@@ -103,7 +109,6 @@ app.post("/new_user", (request, response) => {
         else {
           if (String(name).toLowerCase() !== String(request.body.name).toLowerCase()) {
             //toLowerCase() convierte en minuscula toda la cadena de caracteres
-            console.log("Name = " + name + "Request body = " + request.body.name)
             daoU.insertUser(request.body.name, request.body.pass, (err, id) => {
               if (err) {
                 response.status(500);

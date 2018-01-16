@@ -11,6 +11,8 @@ $(() => {
     $('#unirsePartida').on("click", unirsePartida);
 })
 
+let idUsuario;
+
 function hideAll() {
     $('#usuario').hide();
     $('#loginOk').hide()
@@ -46,14 +48,6 @@ function userLogin(event) {
             //Como empezamos en "mis partidas", cambiamos su color a negro
             $("#seleccionPartidas a:first").css({ "color": "black" });
 
-            Object.keys(data).forEach(x => {
-                var parti = $("<a>");
-                parti.text(data[x].nombre);
-                parti.data("id", data[x].id);
-                //Hacerlo así o con href='' ?¿ Preguntar
-                parti.css({"cursor":"pointer"});
-                $("#seleccionPartidas").append(parti);
-            })
             /**
              * Conseguir TODAS las partidas en curso del usuario
              * y mostrarlas, para ello:
@@ -67,8 +61,11 @@ function userLogin(event) {
               })
               $("#seleccionPartidas").append(result);
              */
+
             //Mostrar partidas del usuario en el html
             $('#partidas').show();
+            //CARGA LAS PARTIDAS DEL USUARIO
+            toolBarPartidas();
         },
 
         error: (jqXHR, textStatus, errorThrown) => {
@@ -155,18 +152,18 @@ function createPartida(event) {
     var text = "";
     if (partidaName === '') {
         text = "\nNombre de partida no puede estar vacío";
-    } 
+    }
     //VALIDAR! Que  no sea vacia, etc
 
     // Comprobar que no existe partida con el mismo nombre ¿?
     // Insertar info en la base de datos, nombre y estado (añadir al jugador que ha creado la partida)
-    
+
     $.ajax({
         type: "POST",
-        url: "/new_partida",
+        url: "/new_partida/",
         contentType: 'application/json',
         //PONER BIEN LOS DATOS QUE ENVIA!!
-        data: JSON.stringify({name: partidaName, estado: "jugador", userId: '1'}),
+        data: JSON.stringify({ name: partidaName, estado: "jugador", userId: '1' }),
         success: (data, textStatus, jqXHR) => {
             //Mostrar la pantalla de espera de la partida?
             alert("Partida insertada!");
@@ -206,7 +203,32 @@ function unirsePartida(event) {
     }
 }
 
-function verPartidas(){
+function toolBarPartidas() {
+
+    $.ajax({
+        type: "GET",
+        url: "/get_partidas/"+idUsuario,
+        contentType: 'application/json',
+        //PONER BIEN LOS DATOS QUE ENVIA!!
+        success: (data, textStatus, jqXHR) => {
+            console.log(data);
+            //Mostrar la pantalla de espera de la partida?
+            Object.keys(data).forEach(x => {
+                var parti = $("<a>");
+                parti.text(data[x].nombre);
+                parti.data("id", data[x].id);
+                //Hacerlo así o con href='' ?¿ Preguntar
+                parti.css({ "cursor": "pointer" });
+                $("#seleccionPartidas").append(parti);
+            })
+        },
+
+        error: (jqXHR, textStatus, errorThrown) => {
+            if (jqXHR.textStatus === 500) {
+                alert("Error en acceso a la base de datos");
+            }
+        }
+    });
 
 }
 

@@ -50,26 +50,29 @@
     <div id='partidas'>
         <div id='seleccionPartidas'>
             <a id='misPartidas' href=''>Mis partidas</a>
-            <a href=''>Partidas amiguetes</a>
-            <a href=''>Familiar</a>
         </div>
 
         <div class='crearPartida'>
             <p>Crear una nueva partida</p>
             <form action='#'>
-                <input class='rellenarCrear' type='text' placeholder='Introduce aquí el nombre' id="crearPartidaName">
+                <input class='rellenarCrear' id="crearPartidaName" type='text' placeholder='Introduce aquí el nombre'>
                 <input class='botonAceptar' id="createPartida" type='submit' value='Crear'>
             </form>
         </div>
         <div class='crearPartida'>
             <p>Unirse a una partida existente</p>
             <form action='#'>
-                <input class='rellenarCrear' type='text' placeholder='Introduce aquí el nombre de la partida'>
-                <input class='botonAceptar' id="joinPartida"type='submit' value='Unirse'>
+                <input class='rellenarCrear'  id="unirsePartidaName" type='text' placeholder='Introduce aquí el nombre de la partida'>
+                <input class='botonAceptar' id="unirsePartida"type='submit' value='Unirse'>
             </form>
         </div>
 
     </div>
+
+    <!-- Página de partida a la espera de jugadores -->
+
+    <!-- Pagina partida en espera de turno es igual 
+        a con turno, salvando varios botones -->
 
 </body>
 

@@ -10,6 +10,7 @@ const config = require("./config");
 const expressValidator = require("express-validator");
 const bodyParser = require('body-parser');
 const daoUsers = require("./dao_users");
+const daoGames = require("./dao_games");
 
 var app = express();
 
@@ -30,6 +31,7 @@ app.use(expressValidator({
 }));
 
 let daoU = new daoUsers.DAOUsers(pool);
+let daoG = new daoGames.DAOGames(pool);
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -84,40 +86,80 @@ app.post("/new_user", (request, response) => {
   request.checkBody("name").notEmpty();
   request.checkBody("pass").notEmpty();
   request.getValidationResult().then((result) => {
-      if (result.isEmpty()) {
-          daoU.userExist(request.body.name, (err, name) => {
+    if (result.isEmpty()) {
+      daoU.userExist(request.body.name, (err, name) => {
+        if (err) {
+          response.status(500);
+          response.end();
+        }
+        else {
+          if (String(name).toLowerCase() !== String(request.body.name).toLowerCase()) {
+            //toLowerCase() convierte en minuscula toda la cadena de caracteres
+            console.log("Name = " + name + "Request body = " + request.body.name)
+            daoU.insertUser(request.body.name, request.body.pass, (err, id) => {
               if (err) {
                 response.status(500);
                 response.end();
+              } else {
+                //Usuario creado correctamente
+                response.status(201);
+                response.end();
               }
-              else {
-                  if (String(name).toLowerCase() !== String(request.body.name).toLowerCase()) {
-                    //toLowerCase() convierte en minuscula toda la cadena de caracteres
-                    console.log("Name = " + name + "Request body = " + request.body.name )
-                      daoU.insertUser(request.body.name, request.body.pass, (err, id) => {
-                              if (err) {
-                                  response.status(500);
-                                  response.end();
-                              } else {
-                                  //Usuario creado correctamente
-                                  response.status(201);
-                                  response.end();
-                              }
-                          })
-                  }
-                  else {
-                      //response.setFlash("Dirección de correo electrónico en uso");
-                      response.status(400);
-                      response.end();
-                  }
-              }
-          })
-      } else {
-          //Usuario/contraseña vacio
-          response.status(400);
-          response.end();
-      }
+            })
+          }
+          else {
+            //response.setFlash("Dirección de correo electrónico en uso");
+            response.status(400);
+            response.end();
+          }
+        }
+      })
+    } else {
+      //Usuario/contraseña vacio
+      response.status(400);
+      response.end();
+    }
   });
+})
+
+app.post("/new_partida", (request, response) => {
+  request.checkBody("name").notEmpty();
+  request.getValidationResult().then((result) => {
+    if (result.isEmpty()) {
+      daoG.partidaExist(request.body.name, (err, name) => {
+        if (err) {
+          response.status(500);
+          response.end();
+        }
+        else {
+          console.log("Partida no existe")
+          if (String(name).toLowerCase() !== String(request.body.name).toLowerCase()) {
+            //toLowerCase() convierte en minuscula toda la cadena de caracteres
+            console.log("Name = " + name + "Request body = " + request.body.name)
+            daoG.addPartida(request.body.name, request.body.estado, request.body.userId, (err, id) => {
+              if (err) {
+                response.status(500);
+                response.end();
+              } else {
+                //Usuario creado correctamente
+                response.status(201);
+                response.end();
+              }
+            })
+          }
+          else {
+            //response.setFlash("Nombre de partida en uso");
+            response.status(400);
+            response.end();
+          }
+        }
+      })
+    } else {
+      //Nombre vacio
+      response.status(400);
+      response.end();
+    }
+  })
 })
 
 //Listen in port gived in config.js

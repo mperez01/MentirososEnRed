@@ -19,7 +19,8 @@ class DAOGames {
                 function (err, resultado) {
                     if (err) { callback(err); return; }
                     else {
-                        callback(resultado);
+                        console.log(resultado);
+                        callback(null, resultado);
                         connection.release();
                     }
                 })

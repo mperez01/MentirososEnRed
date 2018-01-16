@@ -64,8 +64,15 @@ app.post("/login", (request, response) => {
         else {
           if (id > 0) {
             //Usuario logeado
-            response.json(true);
-            daoG.getGames(id,(err,games));
+          daoG.getGames(id,(err,games)=>{
+              if (err) {
+                //Error en base de datos
+                response.status(500);
+                response.end();
+              }else{
+                  response.json(games);
+              }
+            })
           }
           else {
             //Error, usuario o contraseña no válido/encontrado

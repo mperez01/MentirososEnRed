@@ -45,7 +45,6 @@ function userLogin(event) {
 
             //Como empezamos en "mis partidas", cambiamos su color a negro
             $("#partidas a:first").css({ "color": "black" });
-
             /**
              * Conseguir TODAS las partidas en curso del usuario
              * y mostrarlas, para ello:
@@ -158,7 +157,7 @@ function createPartida(event) {
         url: "/new_partida",
         contentType: 'application/json',
         //PONER BIEN LOS DATOS QUE ENVIA!!
-        data: JSON.stringify({name: partidaName, estado: "jugador", userId: int(1)}),
+        data: JSON.stringify({name: partidaName, estado: "jugador", userId: '1'}),
         success: (data, textStatus, jqXHR) => {
             //Mostrar la pantalla de espera de la partida?
             alert("Partida insertada!");
@@ -196,6 +195,10 @@ function unirsePartida(event) {
         $('#unirsePartidaName').val("");
         alert("Vas a unirte a la partida " + unirseName);
     }
+}
+
+function verPartidas(){
+
 }
 
 function userLogout() {

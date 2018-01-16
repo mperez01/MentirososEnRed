@@ -44,7 +44,16 @@ function userLogin(event) {
             $('#usuario').show();
 
             //Como empezamos en "mis partidas", cambiamos su color a negro
-            $("#partidas a:first").css({ "color": "black" });
+            $("#seleccionPartidas a:first").css({ "color": "black" });
+
+            Object.keys(data).forEach(x => {
+                var parti = $("<a>");
+                parti.text(data[x].nombre);
+                parti.data("id", data[x].id);
+                //Hacerlo así o con href='' ?¿ Preguntar
+                parti.css({"cursor":"pointer"});
+                $("#seleccionPartidas").append(parti);
+            })
             /**
              * Conseguir TODAS las partidas en curso del usuario
              * y mostrarlas, para ello:

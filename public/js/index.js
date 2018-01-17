@@ -11,7 +11,8 @@ $(() => {
     $('#unirsePartida').on("click", unirsePartida);
 })
 
-let idUsuario;
+let nombreUsuario = null;
+let cadenaBase64 = null;
 
 function hideAll() {
     $('#usuario').hide();
@@ -20,13 +21,17 @@ function hideAll() {
 }
 
 function userLogin(event) {
+
     var name = $("#name").val();
     var pass = $("#pass").val();
+    nombreUsuario = name;
+    cadenaBase64 = btoa(nombreUsuario + ":" + pass);
+
     var text = "";
-    if (name === '') {
+    if (name === '' || name.trim() === '') {
         text += "\nNombre de usuario no puede estar vacío";
     }
-    if (pass === '') {
+    if (pass === '' || pass.trim() === '') {
         text += "\nContraseña no puede estar vacío";
     }
 
@@ -41,27 +46,10 @@ function userLogin(event) {
             $("#name").val("");
             $("#pass").val("");
             $('#login').hide();
-            //Nombre de usuario en el HTML !!!OJO; lo toma de var name, no de data!!
             $("#usuario > label").html(primeraMayuscula(name));
             $('#usuario').show();
-
             //Como empezamos en "mis partidas", cambiamos su color a negro
             $("#seleccionPartidas a:first").css({ "color": "black" });
-
-            /**
-             * Conseguir TODAS las partidas en curso del usuario
-             * y mostrarlas, para ello:
-             * Dado el objeto PARTIDAS, recorrerlo(forEach) 
-             * let partidas = [];
-             * 
-             * partidasObtenidas.forEach(x => {
-             *  let info = ($("<a href=''>"+ 'Nombre partida' +"</a>"));
-             * info.data("id", id partida)
-                partidas.push(info)
-              })
-              $("#seleccionPartidas").append(result);
-             */
-
             //Mostrar partidas del usuario en el html
             $('#partidas').show();
             //CARGA LAS PARTIDAS DEL USUARIO
@@ -95,14 +83,15 @@ function newUser(event) {
     var name = $("#name").val();
     var pass = $("#pass").val();
     var text = "";
+    event.preventDefault();
     if (name === '') {
         text += "\nNombre de usuario no puede estar vacío";
     }
     if (pass === '') {
         text += "\nContraseña no puede estar vacío";
     }
-
-    event.preventDefault();
+    nombreUsuario = name;
+    cadenaBase64 = btoa(nombreUsuario + ":" + pass);
 
     $.ajax({
         type: "POST",
@@ -116,7 +105,6 @@ function newUser(event) {
             //Nombre de usuario en el HTML !!!OJO; lo toma de var name, no de data!!
             $("#usuario > label").html(primeraMayuscula(name));
             $('#usuario').show();
-
             //Como empezamos en "mis partidas", cambiamos su color a negro
             $("#partidas a:first").css({ "color": "black" });
             //Mostrar partidas del usuario en el html
@@ -164,8 +152,13 @@ function createPartida(event) {
         contentType: 'application/json',
         //PONER BIEN LOS DATOS QUE ENVIA!!
         data: JSON.stringify({ name: partidaName, estado: "jugador", userId: '1' }),
+        beforeSend: function (req) {
+            // Añadimos la cabecera 'Authorization' con los datos // de autenticación. 
+            req.setRequestHeader("Authorization", "Basic " + cadenaBase64);
+        },
         success: (data, textStatus, jqXHR) => {
             //Mostrar la pantalla de espera de la partida?
+            $('#crearPartidaName').val("");
             alert("Partida insertada!");
         },
 
@@ -207,18 +200,21 @@ function toolBarPartidas() {
 
     $.ajax({
         type: "GET",
-        url: "/get_partidas/"+idUsuario,
+        url: "/get_partidas/" +  nombreUsuario,
         contentType: 'application/json',
         //PONER BIEN LOS DATOS QUE ENVIA!!
+        beforeSend: function (req) {
+            // Añadimos la cabecera 'Authorization' con los datos // de autenticación. 
+            req.setRequestHeader("Authorization", "Basic " + cadenaBase64);
+        },
         success: (data, textStatus, jqXHR) => {
-            console.log(data);
             //Mostrar la pantalla de espera de la partida?
             Object.keys(data).forEach(x => {
                 var parti = $("<a>");
+                parti.addClass("partidasBoton")
                 parti.text(data[x].nombre);
                 parti.data("id", data[x].id);
                 //Hacerlo así o con href='' ?¿ Preguntar
-                parti.css({ "cursor": "pointer" });
                 $("#seleccionPartidas").append(parti);
             })
         },
@@ -232,7 +228,11 @@ function toolBarPartidas() {
 
 }
 
-function userLogout() {
-    //Desconexion del usuario
-    //Borrar posible información del usuario
+function userLogout(event) {
+    event.preventDefault();
+    hideAll();
+    $('#login').show();
+    $(".partidasBoton").remove();
+    nombreUsuario = null;
+    cadenaBase64 = null;
 }

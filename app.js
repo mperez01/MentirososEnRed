@@ -9,6 +9,9 @@ const mysql = require("mysql");
 const config = require("./config");
 const expressValidator = require("express-validator");
 const bodyParser = require('body-parser');
+var passport = require("passport");
+var passportHTTP = require("passport-http");
+
 const daoUsers = require("./dao_users");
 const daoGames = require("./dao_games");
 
@@ -33,6 +36,29 @@ app.use(expressValidator({
 let daoU = new daoUsers.DAOUsers(pool);
 let daoG = new daoGames.DAOGames(pool);
 
+//Autenticación
+app.use(passport.initialize());
+
+passport.use(new passportHTTP.BasicStrategy(
+  {
+    realm: 'Autenticacion requerida'
+  },
+  function (user, pass, callback) {
+    daoU.isUserCorrect(user, pass, function (err, id) {
+      if (err) {
+        callback(err);
+      } else {
+        if (id > 0) {
+          callback(null, id);
+        }
+        else {
+          callback(null, false);
+        }
+      }
+    });
+  }
+));
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
@@ -50,11 +76,10 @@ app.get("/", (request, response) => {
   response.end();
 });
 
-app.get("/get_partidas/:id", (request, response) => {
+app.get("/get_partidas/:name", passport.authenticate('basic', { session: false }), (request, response) => {
 
-  daoG.getGames(request.params.id, (err, games) => {
+  daoG.getGames(request.params.name, (err, games) => {
     if (err) {
-      //Error en base de datos
       response.status(500);
       response.end();
     } else {
@@ -66,6 +91,8 @@ app.get("/get_partidas/:id", (request, response) => {
 app.post("/login", (request, response) => {
   request.checkBody("name").notEmpty();
   request.checkBody("pass").notEmpty();
+  request.checkBody("name").whiteSpace();
+  request.checkBody("pass").whiteSpace();
   request.getValidationResult().then((result) => {
     if (result.isEmpty()) {
       daoU.isUserCorrect(request.body.name, request.body.pass, (err, id) => {
@@ -99,6 +126,8 @@ app.post("/new_user", (request, response) => {
   //request.checkBody("name", "Nombre de usuario no válido").matches(/^[A-Z0-9]*$/i);
   request.checkBody("name").notEmpty();
   request.checkBody("pass").notEmpty();
+  request.checkBody("name").whiteSpace();
+  request.checkBody("pass").whiteSpace();
   request.getValidationResult().then((result) => {
     if (result.isEmpty()) {
       daoU.userExist(request.body.name, (err, name) => {
@@ -135,7 +164,7 @@ app.post("/new_user", (request, response) => {
   });
 })
 
-app.post("/new_partida", (request, response) => {
+app.post("/new_partida", passport.authenticate('basic', { session: false }), (request, response) => {
   request.checkBody("name").notEmpty();
   request.getValidationResult().then((result) => {
     if (result.isEmpty()) {
@@ -145,8 +174,8 @@ app.post("/new_partida", (request, response) => {
           response.end();
         }
         else {
-          console.log("Partida no existe")
           if (String(name).toLowerCase() !== String(request.body.name).toLowerCase()) {
+            console.log("Partida no existe")
             //toLowerCase() convierte en minuscula toda la cadena de caracteres
             console.log("Name = " + name + "Request body = " + request.body.name)
             daoG.addPartida(request.body.name, request.body.estado, request.body.userId, (err, id) => {

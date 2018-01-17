@@ -11,15 +11,14 @@ class DAOGames {
         this.pool = pool;
     }
 
-    getGames(idUsuario, callback) {
+    getGames(name, callback) {
         this.pool.getConnection((err, connection) => {
             if (err) { callback(err); return; }
-            connection.query("SELECT partidas.id, partidas.nombre FROM juega_en JOIN partidas ON idPartida=id" +
-                " WHERE idUsuario=?", [idUsuario],
+            connection.query("SELECT DISTINCT partidas.id, partidas.nombre, juega_en.idUsuario FROM juega_en JOIN partidas WHERE " + 
+            " idUsuario=(SELECT usuarios.id FROM usuarios WHERE usuarios.login=?)", [name],
                 function (err, resultado) {
                     if (err) { callback(err); return; }
                     else {
-                        console.log(resultado);
                         callback(null, resultado);
                         connection.release();
                     }

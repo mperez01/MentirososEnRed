@@ -135,3 +135,7 @@ h2 {
   padding: 20px;
   background-color: whitesmoke;
 }
+
+.partidasBoton {
+  cursor: pointer;
+}

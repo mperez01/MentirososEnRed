@@ -50,36 +50,40 @@
     <!--Usuario logeado (Partidas de un usuario)-->
     <div id='partidas'>
         <div id='seleccionPartidas'>
-            <a id='misPartidas' href=''>Mis partidas</a>
+            <a id='misPartidas'>Mis partidas</a>
         </div>
-
-        <div class='crearPartida'>
-            <p>Crear una nueva partida</p>
-            <form action='#'>
-                <input class='rellenarCrear' id="crearPartidaName" type='text' placeholder='Introduce aquí el nombre'>
-                <input class='botonAceptar' id="createPartida" type='submit' value='Crear'>
-            </form>
+        <div id='constructorPartidas'>
+            <div class='crearPartida'>
+                <p>Crear una nueva partida</p>
+                <form action='#'>
+                    <input class='rellenarCrear' id="crearPartidaName" type='text' placeholder='Introduce aquí el nombre'>
+                    <input class='botonAceptar' id="createPartida" type='submit' value='Crear'>
+                </form>
+            </div>
+            <div class='crearPartida'>
+                <p>Unirse a una partida existente</p>
+                <form action='#'>
+                    <input class='rellenarCrear' id="unirsePartidaName" type='text' placeholder='Introduce aquí el nombre de la partida'>
+                    <input class='botonAceptar' id="unirsePartida" type='submit' value='Unirse'>
+                </form>
+            </div>
         </div>
-        <div class='crearPartida'>
-            <p>Unirse a una partida existente</p>
-            <form action='#'>
-                <input class='rellenarCrear'  id="unirsePartidaName" type='text' placeholder='Introduce aquí el nombre de la partida'>
-                <input class='botonAceptar' id="unirsePartida"type='submit' value='Unirse'>
-            </form>
+        <div id='pantallaPartida'>
+            <h1>PARTIDA X</h1>
+            <h2>ID X</h2>
         </div>
-
-    </div>
-
-    <!-- Página de partida a la espera de jugadores 
+        <!-- Página de partida a la espera de jugadores 
     
     <div> Nombre Partida </div>
     <div>La partida aun no tiene 4 jugadores</div>
     <div>El identificador de esta partida es N</div>
 
     -->
-    <!-- Pagina partida en espera de turno es igual 
+        <!-- Pagina partida en espera de turno es igual 
         a con turno, salvando varios botones -->
 
+
+    </div>
 </body>
 
 </html>

@@ -228,6 +228,32 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
   })
 })
 
+app.get("/getPartida/:id", passport.authenticate('basic', { session: false }), (request, response) => {
+  if (request.params.id === '' || String(request.params.id).trim().length <= 0) {
+    response.status(404);
+    response.end();
+  } else {
+    //getPartidaInfo muy similar a comprobarPartida!!
+    daoG.getPartidaInfo(request.params.id, (err, resultado) => {
+      if (err) {
+        response.status(500);
+        response.end();
+      } else {
+        //console.log("resultado " + resultado[0].usuario)
+        if (resultado.length === 0) {
+          //No existe dicha partida
+          response.status(404);
+          response.end();
+        }
+        else {
+          response.json(resultado);
+          response.end();
+        }
+      }
+    })
+  }
+})
+
 //Listen in port gived in config.js
 app.listen(config.port, (err) => {
   if (err) {

@@ -136,6 +136,6 @@ h2 {
   background-color: whitesmoke;
 }
 
-.partidasBoton {
+#misPartidas, .partidasBoton {
   cursor: pointer;
 }

@@ -46,7 +46,9 @@ function userLogin(event) {
             $("#name").val("");
             $("#pass").val("");
             $('#login').hide();
-            $("#usuario > label").html(primeraMayuscula(name));
+            //PODEMOS dejarlo así. o que se muestra tal y como lo introdujo el usuario
+            var nombreUsuario = String(name).toLowerCase();
+            $("#usuario > label").html(primeraMayuscula(nombreUsuario));
             $('#usuario').show();
             //Como empezamos en "mis partidas", cambiamos su color a negro
             $("#seleccionPartidas a:first").css({ "color": "black" });
@@ -106,7 +108,8 @@ function newUser(event) {
             $("#pass").val("");
             $('#login').hide();
             //Nombre de usuario en el HTML !!!OJO; lo toma de var name, no de data!!
-            $("#usuario > label").html(primeraMayuscula(name));
+            var nombreUsuario = String(name).toLowerCase();
+            $("#usuario > label").html(primeraMayuscula(nombreUsuario))
             $('#usuario').show();
             //Como empezamos en "mis partidas", cambiamos su color a negro
             $("#partidas a:first").css({ "color": "black" });

@@ -192,7 +192,6 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
   request.getValidationResult().then((result) => {
     if (result.isEmpty()) {
       daoG.comprobarPartida(request.body.idPartida, (err, resultado) => {
-        console.log()
         if (err) {
           response.status(500);
           response.end();
@@ -201,7 +200,6 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
           resultado.forEach(x => {
             if (request.user === x.idUsuario) {
               existe = true;
-              console.log("Usuario ya esta en la partida")
             }
           })
           if (resultado.length === 0) {
@@ -225,7 +223,6 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
              * no existir se añade a ella (insert) y se muestra su HTML
              */
             if (!existe) {
-              //console.log(resultado[0].idUsuario);
               response.status(200);
               response.end();
               daoG.insertUserInGame(request.body.idPartida, request.user, (err, res) => {
@@ -260,7 +257,6 @@ app.get("/getPartida/:id", passport.authenticate('basic', { session: false }), (
         response.status(500);
         response.end();
       } else {
-        //console.log("resultado " + resultado[0].usuario)
         if (resultado.length === 0) {
           //No existe dicha partida
           response.status(404);

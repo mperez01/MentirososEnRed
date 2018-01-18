@@ -110,6 +110,7 @@ function newUser(event) {
             $('#usuario').show();
             //Como empezamos en "mis partidas", cambiamos su color a negro
             $("#partidas a:first").css({ "color": "black" });
+            $('#constructorPartidas').show();
             //Mostrar partidas del usuario en el html
             $('#partidas').show();
         },
@@ -133,7 +134,6 @@ function newUser(event) {
 
 //Authorization
 function userPartidas(event) {
-    event.preventDefault();
     //$('#partidas').show();
     //Ocultamos (si estuviese mostrado) la partida
     $("#pantallaPartida").hide();
@@ -285,6 +285,7 @@ function toolBarPartidas() {
     de ESTADO)
 */
 function viewPartida(event) {
+    
     let selected = $(event.target);
     let partidaId = selected.data("id");
     //Eliminamos

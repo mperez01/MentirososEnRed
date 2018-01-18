@@ -59,7 +59,7 @@ class DAOGames {
             //connection.release();
             if (err) { callback(err); return; }
             //¿como introducimos las opciones?
-            connection.query("SELECT juega_en.idUsuario FROM partidas JOIN juega_en ON juega_en.idPartida = ?", 
+            connection.query("SELECT DISTINCT juega_en.idUsuario FROM partidas JOIN juega_en ON juega_en.idPartida = ?", 
             [idPartida], function (err, resultado) {
                     connection.release();
                     if (err) {callback(err); return; }

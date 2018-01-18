@@ -128,7 +128,7 @@ h2 {
 }
 
 #seleccionPartidas a:hover {
-  color:rgb(88, 88, 158);
+  color:rgb(88, 88, 158) !important;
 }
 
 .crearPartida {

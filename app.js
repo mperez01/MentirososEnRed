@@ -77,7 +77,7 @@ app.get("/", (request, response) => {
 });
 
 app.get("/get_partidas", passport.authenticate('basic', { session: false }), (request, response) => {
- var userId = String(request.user);
+  var userId = String(request.user);
   daoG.getGames(userId, (err, games) => {
     if (err) {
       response.status(500);
@@ -168,16 +168,49 @@ app.post("/new_partida", passport.authenticate('basic', { session: false }), (re
   request.checkBody("name").whiteSpace();
   request.getValidationResult().then((result) => {
     if (result.isEmpty()) {
-            daoG.addPartida(request.body.name, "estado aqui", request.user, (err, id) => {
-              if (err) {
-                response.status(500);
-                response.end();
-              } else {
-                //Partida creada correctamente
-                response.status(201);
-                response.end();
-              }
-            })
+      daoG.addPartida(request.body.name, "estado aqui", request.user, (err, id) => {
+        if (err) {
+          response.status(500);
+          response.end();
+        } else {
+          //Partida creada correctamente
+          response.status(201);
+          response.end();
+        }
+      })
+    } else {
+      //Nombre vacio
+      response.status(400);
+      response.end();
+    }
+  })
+})
+
+app.post("/joinGame", passport.authenticate('basic', { session: false }), (request, response) => {
+  request.checkBody("idPartida").notEmpty();
+  request.checkBody("idPartida").whiteSpace();
+  request.getValidationResult().then((result) => {
+    if (result.isEmpty()) {
+      daoG.comprobarPartida(request.body.idPartida, (err, resultado) => {
+        if (err) {
+          response.status(500);
+          response.end();
+        } else {
+          if (resultado.length === 0) {
+            //No existe dicha partida
+            response.status(404);
+            response.end();
+          } else if (resultado.length >= 4) {
+            //Partida llena ERROR 400 ????
+            response.status(400);
+            response.end();
+          }
+          else {
+            response.status(200);
+            response.end();
+          }
+        }
+      })
     } else {
       //Nombre vacio
       response.status(400);

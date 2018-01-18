@@ -97,8 +97,7 @@ function newUser(event) {
     if (pass === ''|| pass.trim() === '') {
         text += "\nContraseña no puede estar vacío";
     }
-    nombreUsuario = name;
-    cadenaBase64 = btoa(nombreUsuario + ":" + pass);
+    cadenaBase64 = btoa(name + ":" + pass);
 
     $.ajax({
         type: "POST",
@@ -200,6 +199,7 @@ function unirsePartida(event) {
     var text = "";
     $('#unirsePartidaName').val("");
     if (unirseId === '') {
+        text += "Nombre de partida no puede estar vacío";
         alert("Nombre de partida no puede estar vacío")
     } else {
         $.ajax({
@@ -207,18 +207,19 @@ function unirsePartida(event) {
             url: "/joinGame",
             contentType: 'application/json',
             //PONER BIEN LOS DATOS QUE ENVIA!!
-            data: JSON.stringify({ id: unirseId}),
+            data: JSON.stringify({ idPartida: unirseId}),
             beforeSend: function (req) {
                 // Añadimos la cabecera 'Authorization' con los datos // de autenticación. 
                 req.setRequestHeader("Authorization", "Basic " + cadenaBase64);
             },
             success: (data, textStatus, jqXHR) => {
                 //Mostrar la pantalla de la partida
+                alert("Unido!")
             },
     
             error: (jqXHR, textStatus, errorThrown) => {
                 if (jqXHR.status === 400) {
-                    alert("Partida completa");
+                    alert("Partida completa " + text);
                 } else if (jqXHR.status === 404) {
                     alert("La partida no existe");
                 } else if (jqXHR.status === 500) {

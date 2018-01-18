@@ -47,6 +47,27 @@ class DAOGames {
         })
     }
 
+    /**
+     * Dado un ID de partida, devuelve un objeto con todas los jugadores que estan
+     * jugando en dicha partida
+     * 
+     * @param {*} idPartida Identificador de la partida
+     * @param {*} callback 
+     */
+    comprobarPartida(idPartida, callback) {
+        this.pool.getConnection((err, connection) => {
+            //connection.release();
+            if (err) { callback(err); return; }
+            //¿como introducimos las opciones?
+            connection.query("SELECT juega_en.idUsuario FROM partidas JOIN juega_en ON juega_en.idPartida = ?", 
+            [idPartida], function (err, resultado) {
+                    connection.release();
+                    if (err) {callback(err); return; }
+                    callback(null, resultado)
+                })
+        })
+    }
+
 }
 
 module.exports = {

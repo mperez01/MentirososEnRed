@@ -311,13 +311,13 @@ function viewPartida(event) {
                 //Ocultamos el creador de partidas
                 $("#constructorPartidas").hide();
                 //Mostramos el HTML de la partida (Hay que enviar datos)
-                $("#pantallaPartida h1").text("Nombre: " + selected.text());
-                $("#pantallaPartida h2").text("ID: " + partidaId);
+                $(".info h4").text(selected.text());
+                $(".info p").text("ID: " + partidaId);
                 /** data contiene data[x].usuario y data[x].estado */
                 Object.keys(data).forEach(x => {
                     var user = $("<p>");
                     user.text(data[x].usuario);
-                    $("#pantallaPartida").append(user);
+                    $(".jugadores").append(user);
                 })
                 $("#pantallaPartida").show();
             } else {

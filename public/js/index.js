@@ -9,9 +9,14 @@ $(() => {
     $('#misPartidas').on("click", userPartidas);
     $('#createPartida').on("click", createPartida);
     $('#unirsePartida').on("click", unirsePartida);
+    $("#seleccionPartidas").on("click", "a.partidasBoton", (event) => {
+        //Obtenemos el "a" sobre el que se ha hecho click de las partidas
+        let selected = $(event.target);
+        let partidaId = selected.data("id");
+        alert("Hemos pinchado en la partida con ID: " + partidaId);
+    });
 })
 
-let nombreUsuario = null;
 let cadenaBase64 = null;
 
 function hideAll() {
@@ -24,8 +29,7 @@ function userLogin(event) {
 
     var name = $("#name").val();
     var pass = $("#pass").val();
-    nombreUsuario = name;
-    cadenaBase64 = btoa(nombreUsuario + ":" + pass);
+    cadenaBase64 = btoa(name + ":" + pass);
 
     var text = "";
     if (name === '' || name.trim() === '') {
@@ -58,13 +62,16 @@ function userLogin(event) {
 
         error: (jqXHR, textStatus, errorThrown) => {
             if (jqXHR.status === 404) {
-                alert("Nombre de usuario o contraseña incorrecto");
+                alert("Nombre de usuario o contraseña incorrecto ");
             }
             else if (jqXHR.status === 400) {
                 alert("Datos introducidos de forma incorrecta" + text);
             }
             else if (jqXHR.status === 500) {
                 alert("Error en acceso a la base de datos");
+            }
+            else {
+                alert( "Se ha producido un error: " + jqXHR.responseText);
             }
         }
     });
@@ -84,10 +91,10 @@ function newUser(event) {
     var pass = $("#pass").val();
     var text = "";
     event.preventDefault();
-    if (name === '') {
+    if (name === '' || name.trim() === '') {
         text += "\nNombre de usuario no puede estar vacío";
     }
-    if (pass === '') {
+    if (pass === ''|| pass.trim() === '') {
         text += "\nContraseña no puede estar vacío";
     }
     nombreUsuario = name;
@@ -121,6 +128,9 @@ function newUser(event) {
             else if (jqXHR.status === 500) {
                 alert("Error en acceso a la base de datos");
             }
+            else {
+                alert( "Se ha producido un error: " + jqXHR.responseText);
+            }
         }
     });
 }
@@ -131,6 +141,7 @@ function userPartidas(event) {
     $('#partidas').show();
     $("#misPartidas").css({ "color": "black" });
     //¿Comprobamos de nuevo si hay nuevas partidas en las que esta el usuario?
+    toolBarPartidas();
 }
 
 //Authorization
@@ -138,12 +149,12 @@ function createPartida(event) {
     event.preventDefault();
     var partidaName = $('#crearPartidaName').val();
     var text = "";
-    if (partidaName === '') {
+    $('#crearPartidaName').val("");
+    if (partidaName === '' || partidaName.trim() === '') {
         text = "\nNombre de partida no puede estar vacío";
     }
     //VALIDAR! Que  no sea vacia, etc
 
-    // Comprobar que no existe partida con el mismo nombre ¿?
     // Insertar info en la base de datos, nombre y estado (añadir al jugador que ha creado la partida)
 
     $.ajax({
@@ -151,26 +162,25 @@ function createPartida(event) {
         url: "/new_partida/",
         contentType: 'application/json',
         //PONER BIEN LOS DATOS QUE ENVIA!!
-        data: JSON.stringify({ name: partidaName, estado: "jugador", userId: '1' }),
+        data: JSON.stringify({ name: partidaName}),
         beforeSend: function (req) {
             // Añadimos la cabecera 'Authorization' con los datos // de autenticación. 
             req.setRequestHeader("Authorization", "Basic " + cadenaBase64);
         },
         success: (data, textStatus, jqXHR) => {
             //Mostrar la pantalla de espera de la partida?
-            $('#crearPartidaName').val("");
-            alert("Partida insertada!");
+            toolBarPartidas();
+            //alert("Partida insertada!");
         },
 
         error: (jqXHR, textStatus, errorThrown) => {
             if (jqXHR.status === 400) {
-                if (text === "") {
-                    text += "\nNombre de partida en uso";
-                }
                 alert("Datos introducidos de forma incorrecta" + text);
             }
             else if (jqXHR.status === 500) {
                 alert("Error en acceso a la base de datos");
+            }else {
+                alert( "Se ha producido un error: " + jqXHR.responseText);
             }
         }
     });
@@ -186,13 +196,38 @@ function unirsePartida(event) {
      un código 404. Si la partida ya está completa, se devolverá el código 400.
     */
     event.preventDefault();
-    var unirseName = $('#unirsePartidaName').val();
+    var unirseId = $('#unirsePartidaName').val();
     var text = "";
-    if (unirseName === '') {
+    $('#unirsePartidaName').val("");
+    if (unirseId === '') {
         alert("Nombre de partida no puede estar vacío")
     } else {
-        $('#unirsePartidaName').val("");
-        alert("Vas a unirte a la partida " + unirseName);
+        $.ajax({
+            type: "POST",
+            url: "/joinGame",
+            contentType: 'application/json',
+            //PONER BIEN LOS DATOS QUE ENVIA!!
+            data: JSON.stringify({ id: unirseId}),
+            beforeSend: function (req) {
+                // Añadimos la cabecera 'Authorization' con los datos // de autenticación. 
+                req.setRequestHeader("Authorization", "Basic " + cadenaBase64);
+            },
+            success: (data, textStatus, jqXHR) => {
+                //Mostrar la pantalla de la partida
+            },
+    
+            error: (jqXHR, textStatus, errorThrown) => {
+                if (jqXHR.status === 400) {
+                    alert("Partida completa");
+                } else if (jqXHR.status === 404) {
+                    alert("La partida no existe");
+                } else if (jqXHR.status === 500) {
+                    alert("Error en acceso a la base de datos");
+                } else {
+                    alert( "Se ha producido un error: " + jqXHR.responseText);
+                }
+            }
+        });
     }
 }
 
@@ -200,7 +235,7 @@ function toolBarPartidas() {
 
     $.ajax({
         type: "GET",
-        url: "/get_partidas/" +  nombreUsuario,
+        url: "/get_partidas",
         contentType: 'application/json',
         //PONER BIEN LOS DATOS QUE ENVIA!!
         beforeSend: function (req) {
@@ -208,13 +243,14 @@ function toolBarPartidas() {
             req.setRequestHeader("Authorization", "Basic " + cadenaBase64);
         },
         success: (data, textStatus, jqXHR) => {
+            //Borra partidas si las hubiera
+            $(".partidasBoton").remove();
             //Mostrar la pantalla de espera de la partida?
             Object.keys(data).forEach(x => {
                 var parti = $("<a>");
                 parti.addClass("partidasBoton")
                 parti.text(data[x].nombre);
                 parti.data("id", data[x].id);
-                //Hacerlo así o con href='' ?¿ Preguntar
                 $("#seleccionPartidas").append(parti);
             })
         },
@@ -222,6 +258,8 @@ function toolBarPartidas() {
         error: (jqXHR, textStatus, errorThrown) => {
             if (jqXHR.textStatus === 500) {
                 alert("Error en acceso a la base de datos");
+            } else {
+                alert( "Se ha producido un error: " + jqXHR.responseText);
             }
         }
     });
@@ -233,6 +271,5 @@ function userLogout(event) {
     hideAll();
     $('#login').show();
     $(".partidasBoton").remove();
-    nombreUsuario = null;
     cadenaBase64 = null;
 }

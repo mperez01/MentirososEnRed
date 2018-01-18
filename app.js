@@ -76,9 +76,9 @@ app.get("/", (request, response) => {
   response.end();
 });
 
-app.get("/get_partidas/:name", passport.authenticate('basic', { session: false }), (request, response) => {
-
-  daoG.getGames(request.params.name, (err, games) => {
+app.get("/get_partidas", passport.authenticate('basic', { session: false }), (request, response) => {
+ var userId = String(request.user);
+  daoG.getGames(userId, (err, games) => {
     if (err) {
       response.status(500);
       response.end();
@@ -150,7 +150,6 @@ app.post("/new_user", (request, response) => {
             })
           }
           else {
-            //response.setFlash("Dirección de correo electrónico en uso");
             response.status(400);
             response.end();
           }
@@ -166,36 +165,19 @@ app.post("/new_user", (request, response) => {
 
 app.post("/new_partida", passport.authenticate('basic', { session: false }), (request, response) => {
   request.checkBody("name").notEmpty();
+  request.checkBody("name").whiteSpace();
   request.getValidationResult().then((result) => {
     if (result.isEmpty()) {
-      daoG.partidaExist(request.body.name, (err, name) => {
-        if (err) {
-          response.status(500);
-          response.end();
-        }
-        else {
-          if (String(name).toLowerCase() !== String(request.body.name).toLowerCase()) {
-            console.log("Partida no existe")
-            //toLowerCase() convierte en minuscula toda la cadena de caracteres
-            console.log("Name = " + name + "Request body = " + request.body.name)
-            daoG.addPartida(request.body.name, request.body.estado, request.body.userId, (err, id) => {
+            daoG.addPartida(request.body.name, "estado aqui", request.user, (err, id) => {
               if (err) {
                 response.status(500);
                 response.end();
               } else {
-                //Usuario creado correctamente
+                //Partida creada correctamente
                 response.status(201);
                 response.end();
               }
             })
-          }
-          else {
-            //response.setFlash("Nombre de partida en uso");
-            response.status(400);
-            response.end();
-          }
-        }
-      })
     } else {
       //Nombre vacio
       response.status(400);

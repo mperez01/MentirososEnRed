@@ -11,16 +11,16 @@ class DAOGames {
         this.pool = pool;
     }
 
-    getGames(name, callback) {
+    getGames(idUsuario,callback){
         this.pool.getConnection((err, connection) => {
             if (err) { callback(err); return; }
-            connection.query("SELECT DISTINCT partidas.id, partidas.nombre, juega_en.idUsuario FROM juega_en JOIN partidas WHERE " + 
-            " idUsuario=(SELECT usuarios.id FROM usuarios WHERE usuarios.login=?)", [name],
+            connection.query("SELECT partidas.id, partidas.nombre FROM juega_en JOIN partidas ON idPartida=id" +
+                " WHERE idUsuario=?", [idUsuario],
                 function (err, resultado) {
+                    connection.release();
                     if (err) { callback(err); return; }
                     else {
                         callback(null, resultado);
-                        connection.release();
                     }
                 })
         })
@@ -46,26 +46,6 @@ class DAOGames {
                 })
         })
     }
-
-    partidaExist(name, callback) {
-        this.pool.getConnection((err, connection) => {
-            if (err) { callback(err); return; }
-            connection.query("SELECT nombre FROM partidas WHERE nombre = ?", [name],
-                (err, filas) => {
-                    /* Conecction release se puede poner justo aqui, ya que tenemos la
-                    información de la tabla en filas y no vamos a necesitarlo más */
-                    connection.release();
-                    if (err) { callback(err); return; }
-                    if (filas.length === 0) {
-                        callback(null, -1);
-                    }
-                    else {
-                        callback(null, filas[0].login);
-                    }
-                })
-        })
-    }
-
 
 }
 

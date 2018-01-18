@@ -197,9 +197,20 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
           response.status(500);
           response.end();
         } else {
+          var existe = false;
+          resultado.forEach(x => {
+            if (request.user === x.idUsuario) {
+              existe = true;
+              console.log("Usuario ya esta en la partida")
+            }
+          })
           if (resultado.length === 0) {
             //No existe dicha partida
             response.status(404);
+            response.end();
+          } else if (existe) {
+            //Usuario existe en la partida
+            response.status(200);
             response.end();
           } else if (resultado.length >= 4) {
             //Partida llena ERROR 400 ????
@@ -208,23 +219,15 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
           }
           else {
             //Añadir insert usuario
-            var existe = false;
-            resultado.forEach(x => {
-              if (request.user === x.idUsuario) {
-                existe = true;
-                console.log("Usuario ya esta en la partida")
-              }
-            })
             /**
              * PARA QUE NO SE INSERTE SI YA EXISTE;
              * de existir accedemos al html de la partida con dicho ID, de 
              * no existir se añade a ella (insert) y se muestra su HTML
              */
-            if (existe) {
+            if (!existe) {
               //console.log(resultado[0].idUsuario);
               response.status(200);
               response.end();
-            } else {
               daoG.insertUserInGame(request.body.idPartida, request.user, (err, res) => {
                 if (err) {
                   response.status(500);

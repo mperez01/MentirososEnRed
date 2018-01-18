@@ -172,6 +172,7 @@ function createPartida(event) {
             //Por ahora volvemos a misPartidas
             $("#misPartidas").css({ "color": "black" });
             toolBarPartidas();
+            alert("Partida creada!");
             //alert("Partida insertada!");
         },
 
@@ -216,8 +217,9 @@ function unirsePartida(event) {
                 req.setRequestHeader("Authorization", "Basic " + cadenaBase64);
             },
             success: (data, textStatus, jqXHR) => {
-                //Mostrar la pantalla de la partida
+                //Mostrar la pantalla de la partida ?¿
                 toolBarPartidas();
+                alert("Unido a la partida!");
                 //alert("Unido!")
             },
 

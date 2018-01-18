@@ -217,7 +217,8 @@ function unirsePartida(event) {
             },
             success: (data, textStatus, jqXHR) => {
                 //Mostrar la pantalla de la partida
-                alert("Unido!")
+                toolBarPartidas();
+                //alert("Unido!")
             },
 
             error: (jqXHR, textStatus, errorThrown) => {

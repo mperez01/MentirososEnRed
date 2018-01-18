@@ -192,11 +192,11 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
   request.getValidationResult().then((result) => {
     if (result.isEmpty()) {
       daoG.comprobarPartida(request.body.idPartida, (err, resultado) => {
+        console.log()
         if (err) {
           response.status(500);
           response.end();
         } else {
-          console.log("long; " + resultado.length);
           if (resultado.length === 0) {
             //No existe dicha partida
             response.status(404);
@@ -208,15 +208,33 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
           }
           else {
             //Añadir insert usuario
-            daoG.insertUserInGame(request.body.idPartida,request.user,(err,res)=>{
-              if (err) {
-                response.status(500);
-                response.end();
-              }else{
-                response.status(200);
-                response.end();
+            var existe = false;
+            resultado.forEach(x => {
+              if (request.user === x.idUsuario) {
+                existe = true;
+                console.log("Usuario ya esta en la partida")
               }
-            }) 
+            })
+            /**
+             * PARA QUE NO SE INSERTE SI YA EXISTE;
+             * de existir accedemos al html de la partida con dicho ID, de 
+             * no existir se añade a ella (insert) y se muestra su HTML
+             */
+            if (existe) {
+              //console.log(resultado[0].idUsuario);
+              response.status(200);
+              response.end();
+            } else {
+              daoG.insertUserInGame(request.body.idPartida, request.user, (err, res) => {
+                if (err) {
+                  response.status(500);
+                  response.end();
+                } else {
+                  response.status(200);
+                  response.end();
+                }
+              })
+            }
           }
         }
       })

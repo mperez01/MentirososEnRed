@@ -78,7 +78,7 @@ app.get("/", (request, response) => {
 
 app.get("/get_partidas", passport.authenticate('basic', { session: false }), (request, response) => {
   var userId = String(request.user);
-  daoG.getGames(userId, (err, games) => {
+  daoG.getUserGames(userId, (err, games) => {
     if (err) {
       response.status(500);
       response.end();
@@ -196,6 +196,7 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
           response.status(500);
           response.end();
         } else {
+          console.log("long; " + resultado.length);
           if (resultado.length === 0) {
             //No existe dicha partida
             response.status(404);
@@ -206,8 +207,16 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
             response.end();
           }
           else {
-            response.status(200);
-            response.end();
+            //Añadir insert usuario
+            daoG.insertUserInGame(request.body.idPartida,request.user,(err,res)=>{
+              if (err) {
+                response.status(500);
+                response.end();
+              }else{
+                response.status(200);
+                response.end();
+              }
+            }) 
           }
         }
       })

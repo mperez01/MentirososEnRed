@@ -11,7 +11,7 @@ class DAOGames {
         this.pool = pool;
     }
 
-    getGames(idUsuario,callback){
+    getUserGames(idUsuario,callback){
         this.pool.getConnection((err, connection) => {
             if (err) { callback(err); return; }
             connection.query("SELECT partidas.id, partidas.nombre FROM juega_en JOIN partidas ON idPartida=id" +
@@ -60,6 +60,21 @@ class DAOGames {
             if (err) { callback(err); return; }
             //¿como introducimos las opciones?
             connection.query("SELECT juega_en.idUsuario FROM partidas JOIN juega_en ON juega_en.idPartida = ?", 
+            [idPartida], function (err, resultado) {
+                    connection.release();
+                    if (err) {callback(err); return; }
+                    callback(null, resultado)
+                })
+        })
+    }
+
+    getPartidaInfo(idPartida, callback) {
+        this.pool.getConnection((err, connection) => {
+            //connection.release();
+            if (err) { callback(err); return; }
+            //¿como introducimos las opciones?
+            connection.query("SELECT DISTINCT (SELECT login FROM usuarios where usuarios.id = j.idUsuario) as usuario, p.estado " + 
+            "FROM partidas p JOIN juega_en j ON j.idPartida = ?", 
             [idPartida], function (err, resultado) {
                     connection.release();
                     if (err) {callback(err); return; }

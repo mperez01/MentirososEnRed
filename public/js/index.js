@@ -11,6 +11,15 @@ $(() => {
     $('#unirsePartida').on("click", unirsePartida);
     $("#seleccionPartidas").on("click", "a.partidasBoton", viewPartida);
     $('#botonActualizar').on("click", viewPartida);
+    $('#cartasJugador').on("click", "div.cartasUsuario img", (event)=> {
+        let selected = $(event.target);
+        selected.css({"filter":"brightness(0.7)"});
+        selected.css({"box-shadow" :"0px 0px 10px rgb(59, 89, 219)"});
+        /*  
+            Muestra el nombre de la imagen
+            alert(selected.attr('src'));
+        */
+    });
 })
 
 let cadenaBase64 = null;
@@ -310,6 +319,8 @@ function viewPartida(event) {
             if (data.length > 0) {
                 $("#cartasMesa").hide();
                 $("#cartasJugador").hide();
+                $("div.cartasUsuario img").css({"filter":"none"});
+                $("div.cartasUsuario img").css({"box-shadow" :"none"});
 
                 $(".infoUser").remove();
                 $("#inGameId").text("");

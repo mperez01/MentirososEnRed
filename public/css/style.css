@@ -252,7 +252,7 @@ tr {
 }
 
 .cartasUsuario img:hover {
-  box-shadow: 0px 0px 10px rgb(59, 89, 219);
+  box-shadow: 0px 0px 10px rgb(59, 89, 219) !important;
 }
 
 

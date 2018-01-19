@@ -143,9 +143,9 @@ function userPartidas(event) {
     $("#pantallaPartida").hide();
     //Mostramos el html de crear y unirse a partida
     $("#constructorPartidas").show();
+    $("#seleccionPartidas a").css({ "color": "rgb(36, 142, 255)" });
     $("#misPartidas").css({ "color": "black" });
     //¿Comprobamos de nuevo si hay nuevas partidas en las que esta el usuario?
-    toolBarPartidas();
 }
 
 //Authorization
@@ -308,6 +308,9 @@ function viewPartida(event) {
         },
         success: (data, textStatus, jqXHR) => {
             if (data.length > 0) {
+                $("#cartasMesa").hide();
+                $("#cartasJugador").hide();
+
                 $(".infoUser").remove();
                 $("#inGameId").text("");
                 $(".mensajeInfo").remove();
@@ -334,6 +337,11 @@ function viewPartida(event) {
                 } else {
                     $("#inGameId").text("");
                     $(".mensajeInfo").remove();
+
+                    //REPARTIR CARTAS
+                    //OJO, es necesario ahora comprobar si es el turno del usuario, las cartas, etc
+                    $("#cartasMesa").show();
+                    $("#cartasJugador").show();
                 }
                 /** data contiene data[x].usuario y data[x].estado */
                 Object.keys(data).forEach(x => {

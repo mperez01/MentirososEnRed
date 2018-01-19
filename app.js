@@ -216,7 +216,6 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
             response.end();
           }
           else {
-            //Añadir insert usuario
             /**
              * PARA QUE NO SE INSERTE SI YA EXISTE;
              * de existir accedemos al html de la partida con dicho ID, de 

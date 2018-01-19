@@ -103,7 +103,8 @@ h2 {
   margin: 2px;
 }
 
-.botonAceptar, .botonNuevo, #botonActualizar {
+.botonAceptar, .botonNuevo, #botonActualizar, 
+#botonMentiroso , #botonJugarCartas{
   font-size: 13px;
   padding: 11px;
   border-radius: 5px;
@@ -114,7 +115,9 @@ h2 {
 .botonNuevo:hover, .botonNuevo:focus, 
 .botonAceptar:hover, .botonAceptar:focus,
 #botonLogout:hover, #botonLogout:focus,
-#botonActualizar:hover, #botonActualizar:focus {
+#botonActualizar:hover, #botonActualizar:focus,
+#botonJugarCartas:hover, #botonJugarCartas:focus, 
+#botonMentiroso:hover, #botonMentiroso:focus {
   background:rgb(88, 88, 158);
 }
 
@@ -148,14 +151,19 @@ h2 {
   margin-left: 5%;
 }
 
-.infoGame{
+.infoGame, #cartasMesa, #cartasJugador {
   float: left;
   width: 70%;
-  background-color: rgb(237, 241, 243);
+  /*background-color: rgb(237, 241, 243);*/
   border: 1px solid rgb(113, 120, 127);
   margin: 2%;
-  display: flex;
+  /*display: flex;*/
   justify-content: space-between;
+}
+
+.infoGame {
+  display: flex;
+  background-color: whitesmoke;
 }
 
 .partidaTitulo {
@@ -170,11 +178,22 @@ h2 {
 #botonActualizar{
   width: 130px;
   background-color: rgb(0, 123, 255);
-  color: white;
-  border: none;
   margin-top: 50px;
   margin-right: 20px;
   margin-bottom: 35px;
+}
+
+#botonJugarCartas, #botonMentiroso, #botonActualizar {
+  color: white;
+  border: none;
+}
+
+#botonJugarCartas {
+  background-color: rgb(0, 123, 255);
+}
+
+#botonMentiroso {
+  background-color: rgb(200, 53, 69);
 }
 
 #jugadores{
@@ -187,7 +206,7 @@ h2 {
 }
 
 caption {
-  background-color: rgb(237, 241, 243);
+  background-color: whitesmoke;
   padding: 15px;
   border-bottom: 1px solid rgb(113, 120, 127);
   margin-bottom: 13px;
@@ -200,3 +219,44 @@ tr {
   border-top: 1px solid rgb(200, 201, 202); 
 }
 
+.tittle {
+  background-color: whitesmoke;
+  padding: 10px;
+  border-bottom: 1px solid rgb(113, 120, 127);
+  font-size: 18px;
+}
+
+.cartasAbajo span {
+  display: inline-block;
+  padding: 5px;
+  background-color: rgb(253,255,228);
+  border: 1px solid rgb(113, 120, 127);
+  margin: 5px;
+}
+
+.cartasAbajo, .cartasUsuario {
+  margin-top: 10px;
+  margin-left: 20px;
+}
+
+.infoCartas {
+  margin-top: 8px;
+  margin-bottom: 12px;
+  margin-left: 27px;
+}
+
+.cartasUsuario img{
+  display: inline-block;
+  margin: 5px;
+  width: 80px;
+}
+
+.cartasUsuario img:hover {
+  box-shadow: 0px 0px 10px rgb(59, 89, 219);
+}
+
+
+.cartasUsuario img:active {
+  filter: brightness(0.7);
+  box-shadow: 0px 0px 10px rgb(59, 89, 219);
+}

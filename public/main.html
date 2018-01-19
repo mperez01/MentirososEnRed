@@ -83,19 +83,55 @@
         <!--Parte izqda de la pantalla de la partida-->
         <div class='infoGame'>
             <div id="infoPartida">
-                <p class="partidaTitulo">HEY!</p>
+                <p class="partidaTitulo">Nombre partida</p>
                 <p id="inGameId"></p>
             </div>
             <div>
-                <input id='botonActualizar' id="actualizarPartida" type='submit' value='Actualizar partida'>
+                <input id='botonActualizar' type='submit' value='Actualizar partida'>
             </div>
         </div>
 
         <!-- Estructura del juego -->
         <!-- Cartas en la mesa, tus cartas -->
+        <!-- Cartas en la mesa son las cartas boca abajo -->
+        <div id='cartasMesa'>
+            <div class="tittle">Cartas en la mesa</div>
+            <div class="cartasAbajo">
+                <span>J</span>
+                <span>J</span>
+                <span>J</span>
+                <span>J</span>
+            </div>
+            <div class="infoCartas">
+                <span>Manuel dice que ha colocado un 5</span>
+            </div>
+        </div>
+
+        <div id='cartasJugador'>
+            <div class="tittle">Tus cartas</div>
+            <div class="cartasUsuario">
+                <img src="/img/2_S.png">
+                <img src="/img/2_S.png">
+                <img src="/img/2_S.png">
+                <img src="/img/2_S.png">
+                <img src="/img/2_S.png">
+                <img src="/img/2_S.png">
+                <img src="/img/2_S.png">
+                <img src="/img/2_S.png">
+                <img src="/img/2_S.png">
+                <img src="/img/5_S.png">
+                <img src="/img/J_S.png">
+                <img src="/img/Q_S.png">
+                <img src="/img/2_S.png">
+            </div>
+            <div class="infoCartas">
+                <span hidden>Aún no es tu turno</span>
+                <input id='botonJugarCartas' type='submit' value='Jugar cartas seleccionadas'>
+                <input id='botonMentiroso'  type='submit' value='¡Mentiroso!'>
+            </div>
+        </div>
 
         <!--Parte dcha de la pantalla de la partida-->
-        <p class="encabezadoJ">Jugadores</p>
         <table id='jugadores'>
             <caption>Jugadores</caption>
             <tr>

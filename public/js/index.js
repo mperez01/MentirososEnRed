@@ -291,7 +291,7 @@ function toolBarPartidas() {
     de ESTADO)
 */
 function viewPartida(event) {
-    
+
     let selected = $(event.target);
     let partidaId = selected.data("id");
     //Eliminamos
@@ -307,6 +307,9 @@ function viewPartida(event) {
         },
         success: (data, textStatus, jqXHR) => {
             if (data.length > 0) {
+                $(".infoUser").remove();
+                $("#inGameId").text("");
+                $(".mensajeInfo").remove();
                 //Ponemos todos los "botones" en el color por defecto
                 $("#seleccionPartidas a").css({ "color": "rgb(36, 142, 255)" });
                 //al seleccionado lo ponemos de color azul
@@ -314,13 +317,22 @@ function viewPartida(event) {
                 //Ocultamos el creador de partidas
                 $("#constructorPartidas").hide();
                 //Mostramos el HTML de la partida (Hay que enviar datos)
-                $(".info h4").text(selected.text());
-                $(".info p").text("ID: " + partidaId);
+
+                $(".partidaTitulo").text(selected.text());
+                //Si es menor de cuatro, aparece esto, sino no ya que esta completa
+                if (data.length < 4) {
+                    $("#inGameId").text("El identificador de esta partida es " + partidaId);
+                    $("#infoPartida").append("<p class='mensajeInfo'>La partida aun no tiene cuatro jugadores</p>");
+                } else {
+                    $("#inGameId").text("");
+                    $(".mensajeInfo").remove();
+                }
                 /** data contiene data[x].usuario y data[x].estado */
                 Object.keys(data).forEach(x => {
                     var user = $("<p>");
+                    user.addClass("infoUser")
                     user.text(data[x].usuario);
-                    $(".jugadores").append(user);
+                    $("#jugadores").append(user);
                 })
                 $("#pantallaPartida").show();
             } else {

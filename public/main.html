@@ -82,20 +82,24 @@
     <div id='pantallaPartida'>
         <!--Parte izqda de la pantalla de la partida-->
         <div class='infoGame'>
-                <div id="infoPartida">
-                    <p class="partidaTitulo">HEY!</p>
-                    <p id="inGameId"></p>
-                </div>
-                <div>
-                    <input class='botonActualizar' id="actualizarPartida" type='submit' value='Actualizar partida'>
-                </div>
+            <div id="infoPartida">
+                <p class="partidaTitulo">HEY!</p>
+                <p id="inGameId"></p>
             </div>
-        <!--Parte dcha de la pantalla de la partida-->
-        <div id='jugadores'>
-            <p class="encabezadoJ">Jugadores</p>
-            <p class="">Nombre</p>
-            <p class="">Nº de cartas</p>
+            <div>
+                <input id='botonActualizar' id="actualizarPartida" type='submit' value='Actualizar partida'>
+            </div>
         </div>
+        <!--Parte dcha de la pantalla de la partida-->
+        <p class="encabezadoJ">Jugadores</p>
+        <table id='jugadores'>
+            <caption>Jugadores</caption>
+            <tr>
+                <th>Nombre</th>
+                <th>Nº de cartas</th>
+            </tr>
+        </table>
+
 
     </div>
 </body>

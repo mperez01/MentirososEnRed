@@ -10,6 +10,7 @@ $(() => {
     $('#createPartida').on("click", createPartida);
     $('#unirsePartida').on("click", unirsePartida);
     $("#seleccionPartidas").on("click", "a.partidasBoton", viewPartida);
+    $('#botonActualizar').on("click", viewPartida);
 })
 
 let cadenaBase64 = null;
@@ -310,15 +311,22 @@ function viewPartida(event) {
                 $(".infoUser").remove();
                 $("#inGameId").text("");
                 $(".mensajeInfo").remove();
+
                 //Ponemos todos los "botones" en el color por defecto
-                $("#seleccionPartidas a").css({ "color": "rgb(36, 142, 255)" });
-                //al seleccionado lo ponemos de color azul
-                selected.css({ "color": "black" });
+                // y al seleccionado lo ponemos de color negro si no incluye texto
+                //NO tener texto implica que se esta pulsando al boton actualizar
+                if (selected.text() !== '') {
+                    $("#seleccionPartidas a").css({ "color": "rgb(36, 142, 255)" });
+                    selected.css({ "color": "black" });
+                }
+
                 //Ocultamos el creador de partidas
                 $("#constructorPartidas").hide();
                 //Mostramos el HTML de la partida (Hay que enviar datos)
-
-                $(".partidaTitulo").text(selected.text());
+                //Le dotamos al boton del ID de la partida
+                $("#botonActualizar").data("id", partidaId);
+                //Cogemos el NOMBRE de la partida del resultado
+                $(".partidaTitulo").text(data[0].nombre);
                 //Si es menor de cuatro, aparece esto, sino no ya que esta completa
                 if (data.length < 4) {
                     $("#inGameId").text("El identificador de esta partida es " + partidaId);
@@ -329,10 +337,9 @@ function viewPartida(event) {
                 }
                 /** data contiene data[x].usuario y data[x].estado */
                 Object.keys(data).forEach(x => {
-                    var user = $("<p>");
-                    user.addClass("infoUser")
-                    user.text(data[x].usuario);
-                    $("#jugadores").append(user);
+                    /*var user = $("<td>");
+                    user.text(data[x].usuario);*/
+                    $("#jugadores").append("<tr class='infoUser'> <td>" + data[x].usuario + "</td> <td> " + "---" + " </td> </tr>");
                 })
                 $("#pantallaPartida").show();
             } else {

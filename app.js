@@ -241,7 +241,21 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
                     repartirCartas();
 
                     //Determinar el orden de los jugadores
-                    //Implementar...
+                    daoG.getPlayersInGame(request.body.idPartida, (err, result)=>{
+                      if (err) {
+                        response.status(500);
+                        response.end();
+                      } else {
+                      //Como ya se hizo el insert antes, ya poseemos de los 4 id en result.
+                      let jugadores=[];
+                      result.forEach(x=>{
+                        jugadores.push(x);
+                      })
+                      var ordenJug = jugadores;
+                      ordenJug = shuffle(ordenJug);
+                      console.log(ordenJug);
+                    }
+                    })
 
                     //Seleccionar al jugador que comenzará la partida
                     //Implementar....

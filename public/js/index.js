@@ -350,6 +350,29 @@ function viewPartida(event) {
                     let userID = data[4].userID;
                     var estado = JSON.parse(data[0].estado);
                     turno = estado[4].turno;
+                    let cartasMesa = estado[4].cartasMesa;
+
+
+                    console.log("CARTAS EN LA MESA " + cartasMesa)
+                    if (cartasMesa === 0) {
+                        console.log("Sin cartas jugadas")
+                        $(".cartasAbajo p").remove();
+                        $(".cartasAbajo").append("<p>Sin cartas jugadas la mesa</p>");
+                    } else {
+                        console.log("Con cartas jugadas")
+                        $(".cartasAbajo p").remove();
+                        let cartaAbajo = "<span>" + "VALOR CARTA" + "</span>";
+                        let cont = 0;
+                        $(".cartasAbajo span").remove();
+                        while(cont !== cartasMesa) {
+                            $(".cartasAbajo").append(cartaAbajo);
+                            cont++;
+                        }
+                        //Ultimo turno info (jugaodor x dice que ha colocado x cartas)
+                        $(".infoCartasMesa span").remove();
+                        $(".infoCartasMesa").append("<span>Manuel dice que ha colocado un J</span>");
+                    }
+
                     if (userID === estado[turno].jugadorID) {
                         console.log("Es nuestro turno");
                         $("#botonMentiroso").show();
@@ -368,7 +391,7 @@ function viewPartida(event) {
 
                     //REPARTIR CARTAS se hace desde el servidor, en joingame
                     //OJO, es necesario ahora comprobar si es el turno del usuario, las cartas, etc
-                    
+
                     //IndexUser guardara el indice del usuario del cliente
                     let indexUser;
                     estado.forEach((x, index, array) => {
@@ -376,10 +399,10 @@ function viewPartida(event) {
                             indexUser = index;
                         }
                     })
-                    let cartasUsuario='';
+                    let cartasUsuario = '';
                     $(".cartasUsuario img").remove();
-                    estado[indexUser].cartasJugador.forEach(x=> {
-                         cartasUsuario += '<img src=/img/'+ String(x) + '>';
+                    estado[indexUser].cartasJugador.forEach(x => {
+                        cartasUsuario += '<img src=/img/' + String(x) + '>';
                     })
                     $(".cartasUsuario").append(cartasUsuario);
                     /**

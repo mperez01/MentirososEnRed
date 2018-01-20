@@ -252,7 +252,7 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
                       { jugadorID: null, cartasJugador: jugadores.jugador2, numCartas: lenghtCartas },
                       { jugadorID: null, cartasJugador: jugadores.jugador3, numCartas: lenghtCartas },
                       { jugadorID: null, cartasJugador: jugadores.jugador4, numCartas: lenghtCartas },
-                      { turno: "", cartasMEsa: 0, valorJuego: "", numCartasJugadas: 0 }];
+                      { turno: "", cartasMesa: 0, valorJuego: "", numCartasJugadas: 0 }];
 
                     //OJO; como en comprobarPartida tenemos el resultado de toods los jugadores,
                     //En este momento añadirlos al estado de la partidas

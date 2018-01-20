@@ -350,7 +350,9 @@ function viewPartida(event) {
 
                     //REPARTIR CARTAS se hace desde el servidor, en joingame
                     //OJO, es necesario ahora comprobar si es el turno del usuario, las cartas, etc
-                    alert(data)
+                    //Aquí esta el estado de la partida. Ponemos [0] porque además se devuelve el nombre de cada usuario, etc
+                    console.log(data[0].estado); 
+
                     $("#cartasMesa").show();
                     $("#cartasJugador").show();
                 }

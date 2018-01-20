@@ -237,49 +237,17 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
                 } else {
                   //si la partida tenia 3 usuarios al intentar unirse, repartimos cartas
                   if (resultado.length === 3) {
-                    /**
-                     * Para ello se deben repartir aleatoriamente las 52 cartas de la baraja
-                     *  entre los cuatro jugadores, determinar el orden de los mismos, y seleccionar 
-                     * el jugador que comenzará la partida.
-                     */
-                    let jugador1 = [];
-                    let jugador2 = [];
-                    let jugador3 = [];
-                    let jugador4 = [];
-                    //Barajamos las cartas
-                    var random = cartas;
-                    random = shuffle(random);
-                    console.log("AQUI EMPIEZA")
+                    //Repartir aleatoriamente las 52 cartas de la baraja entre los cuatro jugadores
+                    repartirCartas();
 
-                    random.forEach((x, index, array) => {
-                      //console.log(x.split("_"));
-                      if (index + 1 <= 13) {
-                        jugador1.push(x);
-                      } else if (index + 1 > 13 && index + 1 <= 26) {
-                        jugador2.push(x);
-                      } else if (index + 1 > 26 && index + 1 <= 39) {
-                        jugador3.push(x);
-                      } else if (index + 1 > 39) {
-                        jugador4.push(x);
-                      }
-                    })
-                    //AHORA, añadir las cartas al estado del jugador en la partida
-                    var cartasJugadores = { jugador1, jugador2, jugador3, jugador4 };
-                    console.log(cartasJugadores);
-                    // cartasJugadores.jugador1.length da la cantidad de cartas que tiene jugador 1
-                    console.log(cartasJugadores.jugador1.length);
-                    /**
-                     * cartasJugadores se muestra de la forma: 
-                     * { jugador1:
-                     * [ '7_C.png',
-                     * '2_C.png',
-                     * '8_S.png', .......
-                     * jugador2:
-                     * [ 'J_C.png', .....
-                     * 
-                     * }
-                     */
+                    //Determinar el orden de los jugadores
+                    //Implementar...
+
+                    //Seleccionar al jugador que comenzará la partida
+                    //Implementar....
                   }
+                  //Aquí, añadir al jugador al ESTADO y los demás datos?
+                  // Implementar....
                   response.status(200);
                   response.end();
                 }
@@ -295,6 +263,51 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
     }
   })
 })
+
+/**
+ * Devuelve un objeto divido en 4 jugadores con las 52 cargas de juego 
+ * repartidas aleatoriamente
+ */
+function repartirCartas() {
+  let jugador1 = [];
+  let jugador2 = [];
+  let jugador3 = [];
+  let jugador4 = [];
+  //Barajamos las cartas
+  var random = cartas;
+  random = shuffle(random);
+  console.log("AQUI EMPIEZA")
+
+  random.forEach((x, index, array) => {
+    //console.log(x.split("_"));
+    if (index + 1 <= 13) {
+      jugador1.push(x);
+    } else if (index + 1 > 13 && index + 1 <= 26) {
+      jugador2.push(x);
+    } else if (index + 1 > 26 && index + 1 <= 39) {
+      jugador3.push(x);
+    } else if (index + 1 > 39) {
+      jugador4.push(x);
+    }
+  })
+  //AHORA, añadir las cartas al estado del jugador en la partida
+  var cartasJugadores = { jugador1, jugador2, jugador3, jugador4 };
+  console.log(cartasJugadores);
+  // cartasJugadores.jugador1.length da la cantidad de cartas que tiene jugador 1
+  console.log(cartasJugadores.jugador1.length);
+  /**
+   * cartasJugadores se muestra de la forma: 
+   * { jugador1:
+   * [ '7_C.png',
+   * '2_C.png',
+   * '8_S.png', .......
+   * jugador2:
+   * [ 'J_C.png', .....
+   * 
+   * }
+   */
+  return cartasJugadores;
+}
 
 /**
  * Fisher-Yates algorithm

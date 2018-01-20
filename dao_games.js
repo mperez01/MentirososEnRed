@@ -87,12 +87,26 @@ class DAOGames {
             //connection.release();
             if (err) { callback(err); return; }
             //¿como introducimos las opciones?
-            connection.query("SELECT DISTINCT (SELECT login FROM usuarios where usuarios.id = j.idUsuario) as usuario, p.estado, p.nombre " + 
+            connection.query("SELECT DISTINCT j.idUsuario, (SELECT login FROM usuarios where usuarios.id = j.idUsuario) as usuario, p.estado, p.nombre " + 
             "FROM partidas p JOIN juega_en j ON j.idPartida = ? where p.id=?", 
             [idPartida, idPartida], function (err, resultado) {
                     connection.release();
                     if (err) {callback(err); return; }
                     callback(null, resultado)
+                })
+        })
+    }
+
+    updateEstadoPartida(idPartida, estado, callback) {
+        this.pool.getConnection((err, connection) => {
+            //connection.release();
+            if (err) { callback(err); return; }
+            //¿como introducimos las opciones?
+            connection.query("UPDATE partidas set estado=? where partidas.id =? ", 
+            [estado, idPartida], function (err, resultado) {
+                    connection.release();
+                    if (err) {callback(err); return; }
+                    callback();
                 })
         })
     }

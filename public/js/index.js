@@ -11,7 +11,7 @@ $(() => {
     $('#unirsePartida').on("click", unirsePartida);
     $("#seleccionPartidas").on("click", "a.partidasBoton", viewPartida);
     $('#botonActualizar').on("click", viewPartida);
-    $('#cartasJugador').on("click", "div.cartasUsuario img", (event)=> {
+    $('#cartasJugador').on("click", "div.cartasUsuario img", (event) => {
         let selected = $(event.target);
         selected.toggleClass("cartaSeleccionada");
         /*  
@@ -320,7 +320,7 @@ function viewPartida(event) {
                 $("#cartasJugador").hide();
                 //Para quitar, en caso de que hubiera, clase cartaSeleccionada
                 $(".cartaSeleccionada").removeClass();
-                
+
                 $(".infoUser").remove();
                 $("#inGameId").text("");
                 $(".mensajeInfo").remove();
@@ -340,28 +340,67 @@ function viewPartida(event) {
                 $("#botonActualizar").data("id", partidaId);
                 //Cogemos el NOMBRE de la partida del resultado
                 $(".partidaTitulo").text(data[0].nombre);
+                let turno;
                 //Si es menor de cuatro, aparece esto, sino no ya que esta completa
                 if (data.length < 4) {
                     $("#inGameId").text("El identificador de esta partida es " + partidaId);
                     $("#infoPartida").append("<p class='mensajeInfo'>La partida aun no tiene cuatro jugadores</p>");
                 } else {
+                    //ID DEL USUSARIO que esta en el cliente
+                    let userID = data[4].userID;
+                    var estado = JSON.parse(data[0].estado);
+                    turno = estado[4].turno;
+                    if (userID === estado[turno].jugadorID) {
+                        console.log("Es nuestro turno");
+                        $("#botonMentiroso").show();
+                        $("#botonJugarCartas").show();
+                        $("#noTurno").hide();
+                    }
+                    else {
+                        console.log("No es nuestro turno")
+                        $("#botonMentiroso").hide();
+                        $("#botonJugarCartas").hide();
+                        $("#noTurno").show();
+                    }
+
                     $("#inGameId").text("");
                     $(".mensajeInfo").remove();
 
                     //REPARTIR CARTAS se hace desde el servidor, en joingame
                     //OJO, es necesario ahora comprobar si es el turno del usuario, las cartas, etc
-                    //Aquí esta el estado de la partida. Ponemos [0] porque además se devuelve el nombre de cada usuario, etc
-                    console.log(data[0].estado); 
-
+                    
+                    //IndexUser guardara el indice del usuario del cliente
+                    let indexUser;
+                    estado.forEach((x, index, array) => {
+                        if (x.jugadorID === userID) {
+                            indexUser = index;
+                        }
+                    })
+                    let cartasUsuario='';
+                    $(".cartasUsuario img").remove();
+                    estado[indexUser].cartasJugador.forEach(x=> {
+                         cartasUsuario += '<img src=/img/'+ String(x) + '>';
+                    })
+                    $(".cartasUsuario").append(cartasUsuario);
+                    /**
+                     * turno del index 0. miramos el idJugador del index 0, y si coincide con el que entrega la respuesta, es su turno,
+                     * en cc. no es su turno
+                     */
                     $("#cartasMesa").show();
                     $("#cartasJugador").show();
                 }
                 /** data contiene data[x].usuario y data[x].estado */
-                Object.keys(data).forEach(x => {
+                Object.keys(data).forEach((x, index, array) => {
                     /*var user = $("<td>");
                     user.text(data[x].usuario);*/
-                    $("#jugadores").append("<tr class='infoUser'> <td>" + data[x].usuario + "</td> <td> " + "---" + " </td> </tr>");
+                    if (data[x].usuario !== undefined)
+                        $("#jugadores").append("<tr class='infoUser' id='" + data[x].idUsuario + "'> <td>" + data[x].usuario + "</td> <td> " + "---" + " </td> </tr>");
+                    if (data.length > 4) {
+                        let cssChange = "#" + estado[Number(turno)].jugadorID;
+                        $(cssChange).css({ "background": "green" });
+                    }
                 })
+
                 $("#pantallaPartida").show();
             } else {
                 alert("SIN USUARIOS")

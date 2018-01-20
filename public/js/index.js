@@ -13,8 +13,7 @@ $(() => {
     $('#botonActualizar').on("click", viewPartida);
     $('#cartasJugador').on("click", "div.cartasUsuario img", (event)=> {
         let selected = $(event.target);
-        selected.css({"filter":"brightness(0.7)"});
-        selected.css({"box-shadow" :"0px 0px 10px rgb(59, 89, 219)"});
+        selected.toggleClass("cartaSeleccionada");
         /*  
             Muestra el nombre de la imagen
             alert(selected.attr('src'));
@@ -319,9 +318,9 @@ function viewPartida(event) {
             if (data.length > 0) {
                 $("#cartasMesa").hide();
                 $("#cartasJugador").hide();
-                $("div.cartasUsuario img").css({"filter":"none"});
-                $("div.cartasUsuario img").css({"box-shadow" :"none"});
-
+                //Para quitar, en caso de que hubiera, clase cartaSeleccionada
+                $(".cartaSeleccionada").removeClass();
+                
                 $(".infoUser").remove();
                 $("#inGameId").text("");
                 $(".mensajeInfo").remove();
@@ -349,8 +348,9 @@ function viewPartida(event) {
                     $("#inGameId").text("");
                     $(".mensajeInfo").remove();
 
-                    //REPARTIR CARTAS
+                    //REPARTIR CARTAS se hace desde el servidor, en joingame
                     //OJO, es necesario ahora comprobar si es el turno del usuario, las cartas, etc
+                    alert(data)
                     $("#cartasMesa").show();
                     $("#cartasJugador").show();
                 }

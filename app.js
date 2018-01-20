@@ -36,6 +36,13 @@ app.use(expressValidator({
 let daoU = new daoUsers.DAOUsers(pool);
 let daoG = new daoGames.DAOGames(pool);
 
+let cartas = ["A_C.png", "A_D.png", "A_H.png", "A_S.png", "2_C.png", "2_D.png", "2_H.png",
+  "2_S.png", "3_C.png", "3_D.png", "3_H.png", "3_S.png", "4_C.png", "4_D.png", "4_H.png", "4_S.png", "5_C.png",
+  "5_D.png", "5_H.png", "5_S.png", "6_C.png", "6_D.png", "6_H.png", "6_S.png", "7_C.png", "7_D.png",
+  "7_H.png", "7_S.png", "8_C.png", "8_D.png", "8_H.png", "8_S.png", "9_C.png", "9_D.png", "9_H.png",
+  "9_S.png", "10_C.png", "10_D.png", "10_H.png", "10_S.png", "J_C.png", "J_D.png", "J_H.png", "J_S.png",
+  "Q_C.png", "Q_D.png", "Q_H.png", "Q_S.png", "K_C.png", "K_C.png", "K_H.png", "K_S.png"];
+
 //Autenticación
 app.use(passport.initialize());
 
@@ -168,7 +175,8 @@ app.post("/new_partida", passport.authenticate('basic', { session: false }), (re
   request.checkBody("name").whiteSpace();
   request.getValidationResult().then((result) => {
     if (result.isEmpty()) {
-      daoG.addPartida(request.body.name, "estado aqui", request.user, (err, id) => {
+      var jugadorJson = { jugadoresID: request.user };
+      daoG.addPartida(request.body.name, JSON.stringify(jugadorJson), request.user, (err, id) => {
         if (err) {
           response.status(500);
           response.end();
@@ -222,13 +230,56 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
              * no existir se añade a ella (insert) y se muestra su HTML
              */
             if (!existe) {
-              response.status(200);
-              response.end();
               daoG.insertUserInGame(request.body.idPartida, request.user, (err, res) => {
                 if (err) {
                   response.status(500);
                   response.end();
                 } else {
+                  //si la partida tenia 3 usuarios al intentar unirse, repartimos cartas
+                  if (resultado.length === 3) {
+                    /**
+                     * Para ello se deben repartir aleatoriamente las 52 cartas de la baraja
+                     *  entre los cuatro jugadores, determinar el orden de los mismos, y seleccionar 
+                     * el jugador que comenzará la partida.
+                     */
+                    let jugador1 = [];
+                    let jugador2 = [];
+                    let jugador3 = [];
+                    let jugador4 = [];
+                    //Barajamos las cartas
+                    var random = cartas;
+                    random = shuffle(random);
+                    console.log("AQUI EMPIEZA")
+
+                    random.forEach((x, index, array) => {
+                      //console.log(x.split("_"));
+                      if (index + 1 <= 13) {
+                        jugador1.push(x);
+                      } else if (index + 1 > 13 && index + 1 <= 26) {
+                        jugador2.push(x);
+                      } else if (index + 1 > 26 && index + 1 <= 39) {
+                        jugador3.push(x);
+                      } else if (index + 1 > 39) {
+                        jugador4.push(x);
+                      }
+                    })
+                    //AHORA, añadir las cartas al estado del jugador en la partida
+                    var cartasJugadores = { jugador1, jugador2, jugador3, jugador4 };
+                    console.log(cartasJugadores);
+                    // cartasJugadores.jugador1.length da la cantidad de cartas que tiene jugador 1
+                    console.log(cartasJugadores.jugador1.length);
+                    /**
+                     * cartasJugadores se muestra de la forma: 
+                     * { jugador1:
+                     * [ '7_C.png',
+                     * '2_C.png',
+                     * '8_S.png', .......
+                     * jugador2:
+                     * [ 'J_C.png', .....
+                     * 
+                     * }
+                     */
+                  }
                   response.status(200);
                   response.end();
                 }
@@ -244,6 +295,28 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
     }
   })
 })
+
+/**
+ * Fisher-Yates algorithm
+ * https://github.com/Daplie/knuth-shuffle
+ * 
+ * @param {*} array array to randomize
+ */
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  while (0 !== currentIndex) {
+
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
 
 app.get("/getPartida/:id", passport.authenticate('basic', { session: false }), (request, response) => {
   if (request.params.id === '' || String(request.params.id).trim().length <= 0) {

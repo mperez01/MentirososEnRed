@@ -392,7 +392,6 @@ function viewPartida(event) {
 
                     //REPARTIR CARTAS se hace desde el servidor, en joingame
                     //OJO, es necesario ahora comprobar si es el turno del usuario, las cartas, etc
-
                     //IndexUser guardara el indice del usuario del cliente
                     let indexUser;
                     estado.forEach((x, index, array) => {

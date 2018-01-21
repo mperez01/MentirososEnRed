@@ -243,6 +243,7 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
                     //Repartir aleatoriamente las 52 cartas de la baraja entre los cuatro jugadores
                     var cartasJugadores = repartirCartas();
                     let lenghtCartas = cartasJugadores.jugador1.length;
+                    
                     daoG.getPlayersInGame(request.body.idPartida, (err, result)=>{
                       if (err) {
                         response.status(500);

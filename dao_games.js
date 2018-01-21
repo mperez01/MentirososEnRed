@@ -96,7 +96,17 @@ class DAOGames {
                 })
         })
     }
-
+    getPlayersInGame(idPartida,callback){
+        this.pool.getConnection((err, connection) => {
+            if (err) { callback(err); return; }
+            connection.query("SELECT idUsuario FROM juega_en WHERE idPartida=? ", 
+            [idPartida], function (err, resultado) {
+                    connection.release();
+                    if (err) {callback(err); return; }
+                    callback(null, resultado)
+                })
+        })
+    }
     updateEstadoPartida(idPartida, estado, callback) {
         this.pool.getConnection((err, connection) => {
             //connection.release();

@@ -242,6 +242,18 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
                     //Repartir aleatoriamente las 52 cartas de la baraja entre los cuatro jugadores
                     var jugadores = repartirCartas();
                     let lenghtCartas = jugadores.jugador1.length;
+                    daoG.getPlayersInGame(request.body.idPartida, (err, result)=>{
+                      if (err) {
+                        response.status(500);
+                        response.end();
+                      } else {
+                      //Como ya se hizo el insert antes, ya poseemos de los 4 id en result.
+                      let jugadores=[];
+                      result.forEach(x=>{
+                        jugadores.push(x);
+                      })
+                      jugadores = shuffle(jugadores);
+                      console.log(jugadores);
                     /**
                      * jugadorID: ID del jugador, cartasJugador: las cartas qe tiene el jugador, numCartas: numero de cartas que tiene el jugador
                      * turno: indica el turno del jugador, cartaMEsa: contador int con el numero de cartas en la mesa (boca abajo),  valorJuego: que cartas se estan jugando (supuestamente)
@@ -254,22 +266,20 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
                       { jugadorID: null, cartasJugador: jugadores.jugador4, numCartas: lenghtCartas },
                       { turno: "", cartasMesa: 0, valorJuego: "", numCartasJugadas: 0 }];
 
+                      for(var i=0;i<jugadores.length;i++){
+                        estadoPartida[i].jugadorID = (jugadores[i].idUsuario);
+                      }
                     //OJO; como en comprobarPartida tenemos el resultado de toods los jugadores,
                     //En este momento añadirlos al estado de la partidas
                     //Damos valor a jugadorID en el estado de la partida
-                    resultado.forEach((y, index, array) => {
+                    /*result.forEach((ordenJug,index, array) => {
                       //añadimos el ID al objeto jugadorID de los 3 primeros
-                      estadoPartida[index].jugadorID = (y.idUsuario);
-                    })
-                    //Añadimos al jugador que se acaba de añadir
-                    estadoPartida[3].jugadorID = (request.user);
-
-                    //Seleccionar al jugador que comenzará la partida
-                    //Implementar....
+                      estadoPartida[index].jugadorID = (ordenJug.idUsuario);
+                    })*/
+                
                     //en estadoPartida[4] se guarda la información global de la partida ajena a los jugadores particularmente
-                    //Turno podemos basarlo en 0,1,2,3 siendo 0 el primero, En EL FUTURO hacerlo random 
-                    estadoPartida[4].turno = 3;
-
+                    //Turno podemos ponerlo como 0, ya que anteriormente hemos posicionado los jugadores de manera aleatoria en la partida
+                    estadoPartida[4].turno = 0;
                     //Actualiza el estado de la partida ¿Deberia ser con petición PUT?
                     daoG.updateEstadoPartida(request.body.idPartida, JSON.stringify(estadoPartida), (err) => {
                       if (err) {
@@ -280,6 +290,8 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
                         response.end();
                       }
                     })
+                  }
+                })
                   } else {
                     //Aquí, añadir al jugador al ESTADO y los demás datos?
                     // Implementar....

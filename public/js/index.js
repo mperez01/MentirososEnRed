@@ -341,8 +341,9 @@ function viewPartida(event) {
                 //Cogemos el NOMBRE de la partida del resultado
                 $(".partidaTitulo").text(data[0].nombre);
                 let turno;
+                console.log("jugadores" + data.length);
                 //Si es menor de cuatro, aparece esto, sino no ya que esta completa
-                if (data.length < 4) {
+                if (data.length <= 4) {
                     $("#inGameId").text("El identificador de esta partida es " + partidaId);
                     $("#infoPartida").append("<p class='mensajeInfo'>La partida aun no tiene cuatro jugadores</p>");
                 } else {

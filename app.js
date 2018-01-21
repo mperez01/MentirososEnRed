@@ -272,12 +272,6 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
                       }
                     //OJO; como en comprobarPartida tenemos el resultado de toods los jugadores,
                     //En este momento añadirlos al estado de la partidas
-                    //Damos valor a jugadorID en el estado de la partida
-                    /*result.forEach((ordenJug,index, array) => {
-                      //añadimos el ID al objeto jugadorID de los 3 primeros
-                      estadoPartida[index].jugadorID = (ordenJug.idUsuario);
-                    })*/
-                
                     //en estadoPartida[4] se guarda la información global de la partida ajena a los jugadores particularmente
                     //Turno podemos ponerlo como 0, ya que anteriormente hemos posicionado los jugadores de manera aleatoria en la partida
                     estadoPartida[4].turno = 0;

@@ -101,6 +101,7 @@ app.post("/login", (request, response) => {
   request.checkBody("name").whiteSpace();
   request.checkBody("pass").whiteSpace();
   request.getValidationResult().then((result) => {
+
     if (result.isEmpty()) {
       daoU.isUserCorrect(request.body.name, request.body.pass, (err, id) => {
         if (err) {
@@ -175,8 +176,9 @@ app.post("/new_partida", passport.authenticate('basic', { session: false }), (re
   request.checkBody("name").whiteSpace();
   request.getValidationResult().then((result) => {
     if (result.isEmpty()) {
-      var jugadorJson = { jugadoresID: request.user };
-      daoG.addPartida(request.body.name, JSON.stringify(jugadorJson), request.user, (err, id) => {
+      //jugadoresID, primera IDEA, array con los id de los cuatro jugadores
+      //Segunda idea, al crearla dejarlo vacio, luego añadir todos cuando este lleno
+      daoG.addPartida(request.body.name, "", request.user, (err, id) => {
         if (err) {
           response.status(500);
           response.end();
@@ -235,12 +237,13 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
                   response.status(500);
                   response.end();
                 } else {
-                  //si la partida tenia 3 usuarios al intentar unirse, repartimos cartas
+                  //si la partida tenia 3 usuarios al intentar unirse, repartimos cartas y definimos el estado
                   if (resultado.length === 3) {
+                    console.log("he entrado");
                     //Repartir aleatoriamente las 52 cartas de la baraja entre los cuatro jugadores
-                    repartirCartas();
-
-                    //Determinar el orden de los jugadores
+                    var cartasJugadores = repartirCartas();
+                    let lenghtCartas = cartasJugadores.jugador1.length;
+                    
                     daoG.getPlayersInGame(request.body.idPartida, (err, result)=>{
                       if (err) {
                         response.status(500);
@@ -251,19 +254,44 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
                       result.forEach(x=>{
                         jugadores.push(x);
                       })
-                      var ordenJug = jugadores;
-                      ordenJug = shuffle(ordenJug);
-                      console.log(ordenJug);
-                    }
-                    })
+                      jugadores = shuffle(jugadores);
+                      console.log(jugadores);
+                    /**
+                     * jugadorID: ID del jugador, cartasJugador: las cartas qe tiene el jugador, numCartas: numero de cartas que tiene el jugador
+                     * turno: indica el turno del jugador, cartaMEsa: contador int con el numero de cartas en la mesa (boca abajo),  valorJuego: que cartas se estan jugando (supuestamente)
+                     * numCartasJugadas: numero de cartas jugadas en el ultimo turno
+                     */
+                    var estadoPartida = [
+                      { jugadorID: null, cartasJugador: cartasJugadores.jugador1, numCartas: lenghtCartas },
+                      { jugadorID: null, cartasJugador: cartasJugadores.jugador2, numCartas: lenghtCartas },
+                      { jugadorID: null, cartasJugador: cartasJugadores.jugador3, numCartas: lenghtCartas },
+                      { jugadorID: null, cartasJugador: cartasJugadores.jugador4, numCartas: lenghtCartas },
+                      { turno: "", cartasMesa: 0, valorJuego: "", numCartasJugadas: 0 }];
 
-                    //Seleccionar al jugador que comenzará la partida
-                    //Implementar....
+                      for(var i=0;i<jugadores.length;i++){
+                        estadoPartida[i].jugadorID = (jugadores[i].idUsuario);
+                      }
+                    //OJO; como en comprobarPartida tenemos el resultado de toods los jugadores,
+                    //En este momento añadirlos al estado de la partidas
+                    //en estadoPartida[4] se guarda la información global de la partida ajena a los jugadores particularmente
+                    //Turno podemos ponerlo como 0, ya que anteriormente hemos posicionado los jugadores de manera aleatoria en la partida
+                    estadoPartida[4].turno = 0;
+                    //Actualiza el estado de la partida ¿Deberia ser con petición PUT?
+                    daoG.updateEstadoPartida(request.body.idPartida, JSON.stringify(estadoPartida), (err) => {
+                      if (err) {
+                        response.status(500);
+                        response.end();
+                      } else {
+                        response.status(200);
+                        response.end();
+                      }
+                    })
                   }
-                  //Aquí, añadir al jugador al ESTADO y los demás datos?
-                  // Implementar....
-                  response.status(200);
-                  response.end();
+                })
+                  } else {
+                    response.status(200);
+                    response.end();
+                  }
                 }
               })
             }
@@ -290,7 +318,6 @@ function repartirCartas() {
   //Barajamos las cartas
   var random = cartas;
   random = shuffle(random);
-  console.log("AQUI EMPIEZA")
 
   random.forEach((x, index, array) => {
     //console.log(x.split("_"));
@@ -306,9 +333,9 @@ function repartirCartas() {
   })
   //AHORA, añadir las cartas al estado del jugador en la partida
   var cartasJugadores = { jugador1, jugador2, jugador3, jugador4 };
-  console.log(cartasJugadores);
+  //console.log(cartasJugadores);
   // cartasJugadores.jugador1.length da la cantidad de cartas que tiene jugador 1
-  console.log(cartasJugadores.jugador1.length);
+  //console.log(cartasJugadores.jugador1.length);
   /**
    * cartasJugadores se muestra de la forma: 
    * { jugador1:
@@ -350,7 +377,6 @@ app.get("/getPartida/:id", passport.authenticate('basic', { session: false }), (
     response.status(404);
     response.end();
   } else {
-    //getPartidaInfo muy similar a comprobarPartida!!
     daoG.getPartidaInfo(request.params.id, (err, resultado) => {
       if (err) {
         response.status(500);
@@ -362,7 +388,9 @@ app.get("/getPartida/:id", passport.authenticate('basic', { session: false }), (
           response.end();
         }
         else {
-          response.json(resultado);
+          var res = resultado;
+          res.push({userID: request.user});
+          response.json(res);
           response.end();
         }
       }

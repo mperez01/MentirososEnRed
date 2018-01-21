@@ -239,7 +239,7 @@ tr {
   margin-left: 20px;
 }
 
-.infoCartas {
+.infoCartasMesa, .infoCartasJugador {
   margin-top: 8px;
   margin-bottom: 12px;
   margin-left: 27px;

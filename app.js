@@ -239,9 +239,10 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
                 } else {
                   //si la partida tenia 3 usuarios al intentar unirse, repartimos cartas y definimos el estado
                   if (resultado.length === 3) {
+                    console.log("he entrado");
                     //Repartir aleatoriamente las 52 cartas de la baraja entre los cuatro jugadores
-                    var jugadores = repartirCartas();
-                    let lenghtCartas = jugadores.jugador1.length;
+                    var cartasJugadores = repartirCartas();
+                    let lenghtCartas = cartasJugadores.jugador1.length;
                     daoG.getPlayersInGame(request.body.idPartida, (err, result)=>{
                       if (err) {
                         response.status(500);
@@ -260,10 +261,10 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
                      * numCartasJugadas: numero de cartas jugadas en el ultimo turno
                      */
                     var estadoPartida = [
-                      { jugadorID: null, cartasJugador: jugadores.jugador1, numCartas: lenghtCartas },
-                      { jugadorID: null, cartasJugador: jugadores.jugador2, numCartas: lenghtCartas },
-                      { jugadorID: null, cartasJugador: jugadores.jugador3, numCartas: lenghtCartas },
-                      { jugadorID: null, cartasJugador: jugadores.jugador4, numCartas: lenghtCartas },
+                      { jugadorID: null, cartasJugador: cartasJugadores.jugador1, numCartas: lenghtCartas },
+                      { jugadorID: null, cartasJugador: cartasJugadores.jugador2, numCartas: lenghtCartas },
+                      { jugadorID: null, cartasJugador: cartasJugadores.jugador3, numCartas: lenghtCartas },
+                      { jugadorID: null, cartasJugador: cartasJugadores.jugador4, numCartas: lenghtCartas },
                       { turno: "", cartasMesa: 0, valorJuego: "", numCartasJugadas: 0 }];
 
                       for(var i=0;i<jugadores.length;i++){
@@ -293,8 +294,6 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
                   }
                 })
                   } else {
-                    //Aquí, añadir al jugador al ESTADO y los demás datos?
-                    // Implementar....
                     response.status(200);
                     response.end();
                   }
@@ -383,7 +382,6 @@ app.get("/getPartida/:id", passport.authenticate('basic', { session: false }), (
     response.status(404);
     response.end();
   } else {
-    //getPartidaInfo muy similar a comprobarPartida!!
     daoG.getPartidaInfo(request.params.id, (err, resultado) => {
       if (err) {
         response.status(500);

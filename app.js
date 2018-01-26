@@ -419,7 +419,6 @@ app.post("/juegaCartas", passport.authenticate('basic', { session: false }), (re
         //Cartas en la mesa
         estado[4].cartasMesa.push(card.slice(5));
       });
-      console.log( estado[estado[4].turno].cartasJugador)
       estado[estado[4].turno].numCartas= estado[estado[4].turno].cartasJugador.length;
 
       if(estado[4].turno===3){
@@ -428,12 +427,9 @@ app.post("/juegaCartas", passport.authenticate('basic', { session: false }), (re
         estado[4].turno++;
       }
       estado[4].numCartasJugadas = estado[4].numCartasJugadas + selectedCards.length;
-
+      //console.log(JSON.stringify(estado));
       
-      console.log(estado[0].jugadorID);
-      console.log(estado);
-      
-      daoG.updateEstadoPartida(request.body.idPartida, JSON.stringify(estado), (err) => {
+      daoG.updateEstadoPartida(request.body.partidaId, JSON.stringify(estado), (err) => {
         if (err) {
           response.status(500);
           response.end();
@@ -442,7 +438,7 @@ app.post("/juegaCartas", passport.authenticate('basic', { session: false }), (re
           response.end();
         }
       })
-  }
+    }
   })
   
 })

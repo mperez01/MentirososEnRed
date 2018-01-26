@@ -487,6 +487,7 @@ function jugarCartas(event){
             //Esto debe ir al final para eliminar las cartas seleccionadas
             $(".cartaSeleccionada").remove();
             selectedCards=[];
+            $('#botonActualizar').click();
         },
 
         error: (jqXHR, textStatus, errorThrown) => {

@@ -112,6 +112,7 @@ class DAOGames {
             //¿como introducimos las opciones?
             connection.query("UPDATE partidas set estado=? where partidas.id =? ", 
             [estado, idPartida], function (err, resultado) {
+                console.log(resultado);
                     connection.release();
                     if (err) {callback(err); return; }
                     callback();

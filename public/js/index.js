@@ -390,7 +390,9 @@ function viewPartida(event) {
 
                     if (userID === estado[turno].jugadorID) {
                         console.log("Es nuestro turno");
+                        $("#botonMentiroso").data("id", partidaId);
                         $("#botonMentiroso").show();
+                        $("#botonJugarCartas").data("id", partidaId);
                         $("#botonJugarCartas").show();
                         if(cartasMesa ===0){
                             //poner aqui lo de añadir el valor
@@ -464,11 +466,13 @@ function jugarCartas(event){
     estado.cartasMesa contiene las distintas cartas (nombres)
     estado.cartasJugadas es un int  
     */
+    let selected = $(event.target);
+    let partidaId = selected.data("id");
     $.ajax({
         type: "POST",
         url: "/juegaCartas",
         contentType: 'application/json',
-        data: JSON.stringify({ selectedCards: selectedCards }),
+        data: JSON.stringify({ selectedCards: selectedCards, partidaId: partidaId }),
         beforeSend: function (req) {
             req.setRequestHeader("Authorization", "Basic " + cadenaBase64);
         },

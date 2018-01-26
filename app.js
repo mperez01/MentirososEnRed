@@ -404,8 +404,7 @@ app.post("/juegaCartas", passport.authenticate('basic', { session: false }), (re
   selectedCards.forEach(card=>{
     nuevasCartas=nuevasCartas+card;
   });
-  //Meter bien el id de la partida
-  daoG.getPartidaInfo(7, (err, res)=>{
+  daoG.getPartidaInfo(request.body.partidaId, (err, res)=>{
     if (err) {
       response.status(500);
       response.end();
@@ -413,7 +412,7 @@ app.post("/juegaCartas", passport.authenticate('basic', { session: false }), (re
       //modificar jugador actual y además modificar el estado.
       //modificar cartas jugadas como array de string en el estado.
       //{ turno: turno+1 (if turno === 4) turno=0, cartasMesa: push(card), valorJuego: "", numCartasJugadas: numCartasJugadas+nuevasCartas.length; }];
-      console.log(res[0].estado);
+      console.log(JSON.stringify(res[0].estado["jugadorID"]));
       
       /*daoG.updateEstadoPartida(request.body.idPartida, JSON.stringify(estadoPartida), (err) => {
         if (err) {

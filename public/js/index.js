@@ -369,7 +369,7 @@ function viewPartida(event) {
 
 
                     console.log("CARTAS EN LA MESA " + cartasMesa)
-                    if (cartasMesa === 0) {
+                    if (cartasMesa.length === 0) {
                         console.log("Sin cartas jugadas")
                         $(".cartasAbajo p").remove();
                         $(".cartasAbajo").append("<p>Sin cartas jugadas la mesa</p>");
@@ -379,7 +379,7 @@ function viewPartida(event) {
                         let cartaAbajo = "<span>" + "VALOR CARTA" + "</span>";
                         let cont = 0;
                         $(".cartasAbajo span").remove();
-                        while(cont !== cartasMesa) {
+                        while(cont !== cartasMesa.length) {
                             $(".cartasAbajo").append(cartaAbajo);
                             cont++;
                         }
@@ -394,8 +394,11 @@ function viewPartida(event) {
                         $("#botonMentiroso").show();
                         $("#botonJugarCartas").data("id", partidaId);
                         $("#botonJugarCartas").show();
-                        if(cartasMesa ===0){
+                        if(cartasMesa.length ===0){
                             //poner aqui lo de añadir el valor
+                            console.log(cartasMesa.length);
+                            $("#botonMentiroso").hide();
+                            $(".infoCartasJugador").append("<input type='text' id='valor' name='valor' placeholder='¿Valor a jugar? (A...K)'>");
                         }
                         $("#noTurno").hide();
                     }
@@ -466,13 +469,16 @@ function jugarCartas(event){
     estado.cartasMesa contiene las distintas cartas (nombres)
     estado.cartasJugadas es un int  
     */
+
     let selected = $(event.target);
     let partidaId = selected.data("id");
+    let valorJugado = $("#valor").val();
+    console.log(valorJugado);
     $.ajax({
         type: "POST",
         url: "/juegaCartas",
         contentType: 'application/json',
-        data: JSON.stringify({ selectedCards: selectedCards, partidaId: partidaId }),
+        data: JSON.stringify({ selectedCards: selectedCards, partidaId: partidaId, valorJugado: valorJugado }),
         beforeSend: function (req) {
             req.setRequestHeader("Authorization", "Basic " + cadenaBase64);
         },

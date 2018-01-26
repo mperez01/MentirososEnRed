@@ -412,7 +412,9 @@ app.post("/juegaCartas", passport.authenticate('basic', { session: false }), (re
       //modificar jugador actual y además modificar el estado.
       //modificar cartas jugadas como array de string en el estado.
       //{ turno: turno+1 (if turno === 4) turno=0, cartasMesa: push(card), valorJuego: "", numCartasJugadas: numCartasJugadas+nuevasCartas.length; }];
-      console.log(JSON.stringify(res[0].estado["jugadorID"]));
+      let estado = JSON.parse(res[0].estado);
+      console.log(estado[0].jugadorID);
+      console.log(estado[4]);
       
       /*daoG.updateEstadoPartida(request.body.idPartida, JSON.stringify(estadoPartida), (err) => {
         if (err) {
@@ -439,20 +441,3 @@ app.listen(config.port, (err) => {
   }
 });
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-// error handler
-app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});

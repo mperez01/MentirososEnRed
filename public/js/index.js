@@ -1,6 +1,7 @@
 "use strict";
 
 //OJO al recargar la página
+let selectedCards=[];
 $(() => {
     hideAll();
     $('#loginAceptar').on("click", userLogin);
@@ -14,11 +15,27 @@ $(() => {
     $('#cartasJugador').on("click", "div.cartasUsuario img", (event) => {
         let selected = $(event.target);
         selected.toggleClass("cartaSeleccionada");
-        /*  
-            Muestra el nombre de la imagen
-            alert(selected.attr('src'));
-        */
+        let exist ='';
+        let cont=Number(0);
+        if(selectedCards.length===0){
+            selectedCards.push(selected.attr('src'));
+        }else{
+            selectedCards.forEach(card=>{
+                if(card === selected.attr('src')){
+                    exist=cont;
+                }
+                cont++;
+            })
+            if(exist===''){
+                selectedCards.push(selected.attr('src'));
+            }else{
+                selectedCards.splice(exist,1);
+            }
+        }
+        console.log(selectedCards);
     });
+    $('#botonJugarCartas').on("click", jugarCartas);
+    $('#botonMentiroso').on("click", mentiroso);
 })
 
 let cadenaBase64 = null;
@@ -146,8 +163,6 @@ function newUser(event) {
 
 //Authorization
 function userPartidas(event) {
-    //$('#partidas').show();
-    //Ocultamos (si estuviese mostrado) la partida
     $("#pantallaPartida").hide();
     //Mostramos el html de crear y unirse a partida
     $("#constructorPartidas").show();
@@ -341,7 +356,6 @@ function viewPartida(event) {
                 //Cogemos el NOMBRE de la partida del resultado
                 $(".partidaTitulo").text(data[0].nombre);
                 let turno;
-                console.log("jugadores" + data.length);
                 //Si es menor de cuatro, aparece esto, sino no ya que esta completa
                 if (data.length <= 4) {
                     $("#inGameId").text("El identificador de esta partida es " + partidaId);
@@ -378,6 +392,9 @@ function viewPartida(event) {
                         console.log("Es nuestro turno");
                         $("#botonMentiroso").show();
                         $("#botonJugarCartas").show();
+                        if(cartasMesa ===0){
+                            //poner aqui lo de añadir el valor
+                        }
                         $("#noTurno").hide();
                     }
                     else {
@@ -438,6 +455,43 @@ function viewPartida(event) {
             }
         }
     })
+}
+
+function jugarCartas(event){
+    /*
+    estado[4].numerodecartasjugadas + nnumero de cartas jugadas por el del turno
+    turno = actual+1 si turno = 3 pasar al 0 de nuevo
+    estado.cartasMesa contiene las distintas cartas (nombres)
+    estado.cartasJugadas es un int  
+    */
+    $.ajax({
+        type: "POST",
+        url: "/juegaCartas",
+        contentType: 'application/json',
+        data: JSON.stringify({ selectedCards: selectedCards }),
+        beforeSend: function (req) {
+            req.setRequestHeader("Authorization", "Basic " + cadenaBase64);
+        },
+        success: (data, textStatus, jqXHR) => {
+            
+            //Esto debe ir al final para eliminar las cartas seleccionadas
+            $(".cartaSeleccionada").remove();
+            selectedCards=[];
+        },
+
+        error: (jqXHR, textStatus, errorThrown) => {
+            if (jqXHR.textStatus === 500) {
+                alert("Error en acceso a la base de datos");
+            } else {
+                alert("Se ha producido un error: " + jqXHR.responseText);
+            }
+        }
+    });
+
+}
+
+function mentiroso(){
+
 }
 
 function userLogout(event) {

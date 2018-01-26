@@ -398,6 +398,39 @@ app.get("/getPartida/:id", passport.authenticate('basic', { session: false }), (
   }
 })
 
+app.post("/juegaCartas", passport.authenticate('basic', { session: false }), (request, response) => {
+  let selectedCards = request.body.selectedCards;
+  let nuevasCartas;
+  selectedCards.forEach(card=>{
+    nuevasCartas=nuevasCartas+card;
+  });
+  //Meter bien el id de la partida
+  daoG.getPartidaInfo(7, (err, res)=>{
+    if (err) {
+      response.status(500);
+      response.end();
+    } else {
+      //modificar jugador actual y además modificar el estado.
+      //modificar cartas jugadas como array de string en el estado.
+      //{ turno: turno+1 (if turno === 4) turno=0, cartasMesa: push(card), valorJuego: "", numCartasJugadas: numCartasJugadas+nuevasCartas.length; }];
+      console.log(res[0].estado);
+      
+      /*daoG.updateEstadoPartida(request.body.idPartida, JSON.stringify(estadoPartida), (err) => {
+        if (err) {
+          response.status(500);
+          response.end();
+        } else {
+          response.status(200);
+          response.end();
+        }
+    })*/
+          response.status(200);
+          response.end();
+  }
+  })
+  
+})
+
 //Listen in port gived in config.js
 app.listen(config.port, (err) => {
   if (err) {

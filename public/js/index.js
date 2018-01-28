@@ -393,21 +393,18 @@ function viewPartida(event) {
                     }
 
                     if (userID === estado[turno].jugadorID) {
-                        console.log("Es nuestro turno");
                         $("#botonMentiroso").data("id", partidaId);
                         $("#botonMentiroso").show();
                         $("#botonJugarCartas").data("id", partidaId);
                         $("#botonJugarCartas").show();
                         if (cartasMesa.length === 0) {
                             //poner aqui lo de añadir el valor
-                            console.log(cartasMesa.length);
                             $("#botonMentiroso").hide();
                             $(".infoCartasJugador").append("<input type='text' id='valor' name='valor' placeholder='¿Valor a jugar? (A...K)'>");
                         }
                         $("#noTurno").hide();
                     }
                     else {
-                        console.log("No es nuestro turno")
                         $(".infoCartasJugador input[type='text']").hide();
                         $("#botonMentiroso").hide();
                         $("#botonJugarCartas").hide();
@@ -447,9 +444,9 @@ function viewPartida(event) {
                         $("#jugadores").append("<tr class='infoUser' id='" + y.jugadorID + "'> <td>" + data[x].usuario + "</td> <td> " + y.numCartas  + " </td> </tr>");
                         y.jugadorID
                     })*/
-
+                    let estado = JSON.parse(data[0].estado);
                     if (data[x].usuario !== undefined)
-                        $("#jugadores").append("<tr class='infoUser' id='" + data[x].idUsuario + "'> <td>" + data[x].usuario + "</td> <td> --- </td> </tr>");
+                        $("#jugadores").append("<tr class='infoUser' id='" + data[x].idUsuario + "'> <td>" + data[x].usuario + "</td> <td>"+estado[x].numCartas+ "</td> </tr>");
                     if (data.length > 4) {
                         let cssChange = "#" + estado[Number(turno)].jugadorID;
                         $(cssChange).css({ "background": "green" });

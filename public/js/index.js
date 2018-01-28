@@ -449,7 +449,7 @@ function viewPartida(event) {
                     })*/
 
                     if (data[x].usuario !== undefined)
-                        $("#jugadores").append("<tr class='infoUser' id='" + data[x].idUsuario + "'> <td>" + data[x].usuario + "</td> <td> " + data[0].estado[1].numCartas + " </td> </tr>");
+                        $("#jugadores").append("<tr class='infoUser' id='" + data[x].idUsuario + "'> <td>" + data[x].usuario + "</td> <td> --- </td> </tr>");
                     if (data.length > 4) {
                         let cssChange = "#" + estado[Number(turno)].jugadorID;
                         $(cssChange).css({ "background": "green" });
@@ -515,8 +515,29 @@ function jugarCartas(event) {
 
 }
 
-function mentiroso() {
+function mentiroso(event) {
+    let selected = $(event.target);
+    let partidaId = selected.data("id");
+    $.ajax({
+        type: "POST",
+        url: "/mentiroso",
+        contentType: 'application/json',
+        data: JSON.stringify({ partidaId: partidaId }),
+        beforeSend: function (req) {
+            req.setRequestHeader("Authorization", "Basic " + cadenaBase64);
+        },
+        success: (data, textStatus, jqXHR) => {
+            $('#botonActualizar').click();
+        },
 
+        error: (jqXHR, textStatus, errorThrown) => {
+            if (jqXHR.textStatus === 500) {
+                alert("Error en acceso a la base de datos");
+            } else {
+                alert("Se ha producido un error: " + jqXHR.responseText);
+            }
+        }
+    });
 }
 
 function userLogout(event) {

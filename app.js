@@ -412,7 +412,10 @@ app.post("/juegaCartas", passport.authenticate('basic', { session: false }), (re
       //modificar cartas jugadas como array de string en el estado.
       //{ turno: turno+1 (if turno === 4) turno=0, cartasMesa: push(card), valorJuego: "", numCartasJugadas: numCartasJugadas+nuevasCartas.length; }];
       let estado = JSON.parse(res[0].estado);
-      estado[4].valorJuego = request.body.valorJugado;
+      if(estado[4].valorJuego===""){
+        estado[4].valorJuego = request.body.valorJugado;
+      }
+      
       estado[4].cartasAnterior = [];
       selectedCards.forEach(card=>{
         //slice lo ponemos para quitar el inicio /img/
@@ -445,6 +448,72 @@ app.post("/juegaCartas", passport.authenticate('basic', { session: false }), (re
     }
   })
   
+})
+
+app.post("/mentiroso", passport.authenticate('basic', { session: false }), (request, response) =>{
+  let mentiroso=false;
+  let jugadorAnterior;
+
+  daoG.getPartidaInfo(request.body.partidaId, (err, res)=>{
+    if (err) {
+      response.status(500);
+      response.end();
+    } else {
+      let estado = JSON.parse(res[0].estado);
+      let ultimasCartasValor=[];
+
+      estado[4].cartasAnterior.forEach(x=>{
+        ultimasCartasValor.push(x.slice(0,x.length-6));
+      });
+
+      ultimasCartasValor.forEach(x=>{
+        console.log("valorJ: " + estado[4].valorJuego);
+        console.log("valorX: " + String(x));
+
+        if(estado[4].valorJuego!==String(x)){
+          mentiroso=true;
+        }
+      })
+
+      if(estado[4].turno===0){
+        jugadorAnterior=3;
+      }else{
+        jugadorAnterior=estado[4].turno-1;
+      }
+
+      if(mentiroso === true){
+        estado[4].cartasMesa.forEach(x=>{
+          estado[jugadorAnterior].cartasJugador.push(x);
+        })
+        estado[jugadorAnterior].numCartas+=estado[4].cartasMesa.length;
+        estado[4].turno=jugadorAnterior;
+        estado[4].cartasMesa=[];
+        estado[4].numCartasJugadas= 0; 
+        estado[4].cartasAnterior= [];
+        estado[4].valorJuego = "";
+      }else{
+        estado[4].cartasMesa.forEach(x=>{
+          estado[estado[4].turno].cartasJugador.push(x);
+        })
+        estado[estado[4].turno].numCartas+=estado[4].cartasMesa.length;
+        estado[4].cartasMesa=[];
+        estado[4].numCartasJugadas= 0; 
+        estado[4].cartasAnterior= [];
+        estado[4].valorJuego = "";
+        estado[4].valorJuego="";
+      }
+
+      daoG.updateEstadoPartida(request.body.partidaId, JSON.stringify(estado), (err) => {
+        if (err) {
+          response.status(500);
+          response.end();
+        } else {
+          response.status(200);
+          response.end();
+        }
+      })
+    }
+  })
 })
 
 //Listen in port gived in config.js

@@ -266,7 +266,7 @@ app.post("/joinGame", passport.authenticate('basic', { session: false }), (reque
                       { jugadorID: null, cartasJugador: cartasJugadores.jugador2, numCartas: lenghtCartas },
                       { jugadorID: null, cartasJugador: cartasJugadores.jugador3, numCartas: lenghtCartas },
                       { jugadorID: null, cartasJugador: cartasJugadores.jugador4, numCartas: lenghtCartas },
-                      { turno: "", cartasMesa: [], valorJuego: "", numCartasJugadas: 0 }];
+                      { turno: "", cartasMesa: [], valorJuego: "", numCartasJugadas: 0, cartasAnterior: [] }];
 
                       for(var i=0;i<jugadores.length;i++){
                         estadoPartida[i].jugadorID = (jugadores[i].idUsuario);
@@ -390,6 +390,8 @@ app.get("/getPartida/:id", passport.authenticate('basic', { session: false }), (
         else {
           var res = resultado;
           res.push({userID: request.user});
+          console.log("RES!!")
+          console.log (res);
           response.json(res);
           response.end();
         }
@@ -411,13 +413,15 @@ app.post("/juegaCartas", passport.authenticate('basic', { session: false }), (re
       //{ turno: turno+1 (if turno === 4) turno=0, cartasMesa: push(card), valorJuego: "", numCartasJugadas: numCartasJugadas+nuevasCartas.length; }];
       let estado = JSON.parse(res[0].estado);
       estado[4].valorJuego = request.body.valorJugado;
-
+      estado[4].cartasAnterior = [];
       selectedCards.forEach(card=>{
         //slice lo ponemos para quitar el inicio /img/
         //estado[estado[4].turno] es el jugador actual.
         estado[estado[4].turno].cartasJugador.splice( estado[estado[4].turno].cartasJugador.indexOf(card.slice(5)),1);
         //Cartas en la mesa
         estado[4].cartasMesa.push(card.slice(5));
+        //añadimos info sobre las ultimas cartas jugadas
+        estado[4].cartasAnterior.push(card.slice(5));
       });
       estado[estado[4].turno].numCartas= estado[estado[4].turno].cartasJugador.length;
 

@@ -1,7 +1,7 @@
 "use strict";
 
 //OJO al recargar la página
-let selectedCards=[];
+let selectedCards = [];
 $(() => {
     hideAll();
     $('#loginAceptar').on("click", userLogin);
@@ -15,24 +15,24 @@ $(() => {
     $('#cartasJugador').on("click", "div.cartasUsuario img", (event) => {
         let selected = $(event.target);
         selected.toggleClass("cartaSeleccionada");
-        let exist ='';
-        let cont=Number(0);
-        if(selectedCards.length===0){
+        let exist = '';
+        let cont = Number(0);
+        if (selectedCards.length === 0) {
             selectedCards.push(selected.attr('src'));
-        }else{
-            selectedCards.forEach(card=>{
-                if(card === selected.attr('src')){
-                    exist=cont;
+        } else {
+            selectedCards.forEach(card => {
+                if (card === selected.attr('src')) {
+                    exist = cont;
                 }
                 cont++;
             })
-            if(exist===''){
+            if (exist === '') {
                 selectedCards.push(selected.attr('src'));
-            }else{
-                selectedCards.splice(exist,1);
+            } else {
+                selectedCards.splice(exist, 1);
             }
         }
-        console.log(selectedCards);
+        console.log("Cartas seleccionadas " + selectedCards);
     });
     $('#botonJugarCartas').on("click", jugarCartas);
     $('#botonMentiroso').on("click", mentiroso);
@@ -318,6 +318,7 @@ function viewPartida(event) {
 
     let selected = $(event.target);
     let partidaId = selected.data("id");
+    selectedCards = [];
     //Eliminamos
     $("#pantallaPartida > p").remove();
     $.ajax({
@@ -339,6 +340,7 @@ function viewPartida(event) {
                 $(".infoUser").remove();
                 $("#inGameId").text("");
                 $(".mensajeInfo").remove();
+                $(".infoCartasJugador input[type='text']").hide();
 
                 //Ponemos todos los "botones" en el color por defecto
                 // y al seleccionado lo ponemos de color negro si no incluye texto
@@ -369,6 +371,7 @@ function viewPartida(event) {
 
 
                     console.log("CARTAS EN LA MESA " + cartasMesa)
+                    $(".cartasAbajo span").remove();
                     if (cartasMesa.length === 0) {
                         console.log("Sin cartas jugadas")
                         $(".cartasAbajo p").remove();
@@ -376,16 +379,17 @@ function viewPartida(event) {
                     } else {
                         console.log("Con cartas jugadas")
                         $(".cartasAbajo p").remove();
-                        let cartaAbajo = "<span>" + "VALOR CARTA" + "</span>";
+
+                        let cartaAbajo = "<span>" + estado[4].valorJuego + "</span>";
                         let cont = 0;
                         $(".cartasAbajo span").remove();
-                        while(cont !== cartasMesa.length) {
+                        while (cont !== cartasMesa.length) {
                             $(".cartasAbajo").append(cartaAbajo);
                             cont++;
                         }
                         //Ultimo turno info (jugaodor x dice que ha colocado x cartas)
                         $(".infoCartasMesa span").remove();
-                        $(".infoCartasMesa").append("<span>Manuel dice que ha colocado un J</span>");
+                        //$(".infoCartasMesa").append("<span>Manuel dice que ha colocado un J</span>");
                     }
 
                     if (userID === estado[turno].jugadorID) {
@@ -394,7 +398,7 @@ function viewPartida(event) {
                         $("#botonMentiroso").show();
                         $("#botonJugarCartas").data("id", partidaId);
                         $("#botonJugarCartas").show();
-                        if(cartasMesa.length ===0){
+                        if (cartasMesa.length === 0) {
                             //poner aqui lo de añadir el valor
                             console.log(cartasMesa.length);
                             $("#botonMentiroso").hide();
@@ -404,6 +408,7 @@ function viewPartida(event) {
                     }
                     else {
                         console.log("No es nuestro turno")
+                        $(".infoCartasJugador input[type='text']").hide();
                         $("#botonMentiroso").hide();
                         $("#botonJugarCartas").hide();
                         $("#noTurno").show();
@@ -438,8 +443,13 @@ function viewPartida(event) {
                 Object.keys(data).forEach((x, index, array) => {
                     /*var user = $("<td>");
                     user.text(data[x].usuario);*/
+                    /*data[0].estado.forEach(y => {
+                        $("#jugadores").append("<tr class='infoUser' id='" + y.jugadorID + "'> <td>" + data[x].usuario + "</td> <td> " + y.numCartas  + " </td> </tr>");
+                        y.jugadorID
+                    })*/
+
                     if (data[x].usuario !== undefined)
-                        $("#jugadores").append("<tr class='infoUser' id='" + data[x].idUsuario + "'> <td>" + data[x].usuario + "</td> <td> " + "---" + " </td> </tr>");
+                        $("#jugadores").append("<tr class='infoUser' id='" + data[x].idUsuario + "'> <td>" + data[x].usuario + "</td> <td> " + data[0].estado[1].numCartas + " </td> </tr>");
                     if (data.length > 4) {
                         let cssChange = "#" + estado[Number(turno)].jugadorID;
                         $(cssChange).css({ "background": "green" });
@@ -462,7 +472,7 @@ function viewPartida(event) {
     })
 }
 
-function jugarCartas(event){
+function jugarCartas(event) {
     /*
     estado[4].numerodecartasjugadas + nnumero de cartas jugadas por el del turno
     turno = actual+1 si turno = 3 pasar al 0 de nuevo
@@ -473,35 +483,39 @@ function jugarCartas(event){
     let selected = $(event.target);
     let partidaId = selected.data("id");
     let valorJugado = $("#valor").val();
-    console.log(valorJugado);
-    $.ajax({
-        type: "POST",
-        url: "/juegaCartas",
-        contentType: 'application/json',
-        data: JSON.stringify({ selectedCards: selectedCards, partidaId: partidaId, valorJugado: valorJugado }),
-        beforeSend: function (req) {
-            req.setRequestHeader("Authorization", "Basic " + cadenaBase64);
-        },
-        success: (data, textStatus, jqXHR) => {
-            
-            //Esto debe ir al final para eliminar las cartas seleccionadas
-            $(".cartaSeleccionada").remove();
-            selectedCards=[];
-            $('#botonActualizar').click();
-        },
+    if (selectedCards.length === 0) {
+        alert("Tienes que seleccionar al menos una carta")
+    }
+    else {
+        $.ajax({
+            type: "POST",
+            url: "/juegaCartas",
+            contentType: 'application/json',
+            data: JSON.stringify({ selectedCards: selectedCards, partidaId: partidaId, valorJugado: valorJugado }),
+            beforeSend: function (req) {
+                req.setRequestHeader("Authorization", "Basic " + cadenaBase64);
+            },
+            success: (data, textStatus, jqXHR) => {
 
-        error: (jqXHR, textStatus, errorThrown) => {
-            if (jqXHR.textStatus === 500) {
-                alert("Error en acceso a la base de datos");
-            } else {
-                alert("Se ha producido un error: " + jqXHR.responseText);
+                //Esto debe ir al final para eliminar las cartas seleccionadas
+                $(".cartaSeleccionada").remove();
+                selectedCards = [];
+                $('#botonActualizar').click();
+            },
+
+            error: (jqXHR, textStatus, errorThrown) => {
+                if (jqXHR.textStatus === 500) {
+                    alert("Error en acceso a la base de datos");
+                } else {
+                    alert("Se ha producido un error: " + jqXHR.responseText);
+                }
             }
-        }
-    });
+        });
+    }
 
 }
 
-function mentiroso(){
+function mentiroso() {
 
 }
 

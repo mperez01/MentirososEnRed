@@ -444,9 +444,17 @@ function viewPartida(event) {
                         $("#jugadores").append("<tr class='infoUser' id='" + y.jugadorID + "'> <td>" + data[x].usuario + "</td> <td> " + y.numCartas  + " </td> </tr>");
                         y.jugadorID
                     })*/
-                    let estado = JSON.parse(data[0].estado);
-                    if (data[x].usuario !== undefined)
-                        $("#jugadores").append("<tr class='infoUser' id='" + data[x].idUsuario + "'> <td>" + data[x].usuario + "</td> <td>"+estado[x].numCartas+ "</td> </tr>");
+                    if (data[x].usuario !== undefined){
+                        if(data.length <= 4){
+                            $("#jugadores").append("<tr class='infoUser' id='" + data[x].idUsuario + "'> <td>" + data[x].usuario + "</td> <td> --- </td> </tr>");
+                        }else{
+                            $("#jugadores").append("<tr class='infoUser' id='" + estado[x].jugadorID + "'> <td>" + data[estado[x].jugadorID-1].usuario + "</td> <td>"+estado[data[x].idUsuario-1].numCartas+"</td> </tr>");
+                        }
+                        
+                    }
+                    
+                        
+                    
                     if (data.length > 4) {
                         let cssChange = "#" + estado[Number(turno)].jugadorID;
                         $(cssChange).css({ "background": "green" });

@@ -438,12 +438,6 @@ function viewPartida(event) {
                 }
                 /** data contiene data[x].usuario y data[x].estado */
                 Object.keys(data).forEach((x, index, array) => {
-                    /*var user = $("<td>");
-                    user.text(data[x].usuario);*/
-                    /*data[0].estado.forEach(y => {
-                        $("#jugadores").append("<tr class='infoUser' id='" + y.jugadorID + "'> <td>" + data[x].usuario + "</td> <td> " + y.numCartas  + " </td> </tr>");
-                        y.jugadorID
-                    })*/
                     if (data[x].usuario !== undefined){
                         if(data.length <= 4){
                             $("#jugadores").append("<tr class='infoUser' id='" + data[x].idUsuario + "'> <td>" + data[x].usuario + "</td> <td> --- </td> </tr>");
@@ -452,9 +446,7 @@ function viewPartida(event) {
                         }
                         
                     }
-                    
-                        
-                    
+ 
                     if (data.length > 4) {
                         let cssChange = "#" + estado[Number(turno)].jugadorID;
                         $(cssChange).css({ "background": "green" });

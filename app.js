@@ -390,8 +390,6 @@ app.get("/getPartida/:id", passport.authenticate('basic', { session: false }), (
         else {
           var res = resultado;
           res.push({userID: request.user});
-          console.log("RES!!")
-          console.log (res);
           response.json(res);
           response.end();
         }

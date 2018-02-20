@@ -41,6 +41,7 @@ La pantalla del usuario una vez empiece la partida tendrá información como la 
 ### Diseño de la base de datos
 
 ![](https://i.imgur.com/tFLsw2Q.png)
+
 Dos entidades principales: usuarios y partidas, con una relación muchos-a-muchos entre ambas, representada mediante la tabla juega_en. Para cada usuario se almacena su nombre de usuario (login) y contraseña. Para cada partida se almacena su nombre y su estado actual. El estado es un texto en formato JSON que contiene la situación actual de la partida: cartas de cada jugador, cartas en el centro de la mesa, jugador que tiene el turno, etc. La tabla historial, que almacenará los eventos que se van produciendo en cada partida, existe, pero **no esta implementado** su uso en la versión actual
 
 ## Recursos utilizados

@@ -36,10 +36,12 @@ Una vez la partida este completa (cuatro jugadores) comenzará la partida, se re
 EL primer jugador puede eleguir que cartas se jugaran en la mesa. Los próximos turnos el jugador podrá elegir si jugar cartas o decir que el jugador anterior esta mintiendo. La partida acaba cuando un jugador se queda sin cartas.
 
 ![](https://i.imgur.com/3UZFMWY.png)
+La pantalla del usuario una vez empiece la partida tendrá información como la de la imagen anterior, apareciendo los botones "jugar cartas seleccionadas" y "mentiroso" si fuese su turno.
 
 ### Diseño de la base de datos
 
 ![](https://i.imgur.com/tFLsw2Q.png)
+Dos entidades principales: usuarios y partidas, con una relación muchos-a-muchos entre ambas, representada mediante la tabla juega_en. Para cada usuario se almacena su nombre de usuario (login) y contraseña. Para cada partida se almacena su nombre y su estado actual. El estado es un texto en formato JSON que contiene la situación actual de la partida: cartas de cada jugador, cartas en el centro de la mesa, jugador que tiene el turno, etc. La tabla historial, que almacenará los eventos que se van produciendo en cada partida, existe, pero **no esta implementado** su uso en la versión actual
 
 ## Recursos utilizados
 

@@ -55,3 +55,9 @@ Dos entidades principales: usuarios y partidas, con una relación muchos-a-mucho
  - [JQuery](https://jquery.com/)
     - [Ajax](http://api.jquery.com/jquery.ajax/)
  - [XAMPP](https://www.apachefriends.org/es/index.html)
+ 
+ ### Licencia
+ 
+MIT License
+
+Copyright (c) 2017 Marcelino Pérez and Mario Rodríguez
